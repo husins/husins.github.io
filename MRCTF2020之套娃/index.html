@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>MRCTF2020之套娃</title>
+  
+  
+  <meta property="og:title" content="MRCTF2020之套娃">
+  
+  
+  <meta property="og:url" content="https://husins.cn/MRCTF2020%E4%B9%8B%E5%A5%97%E5%A8%83/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-01-27">
+  <meta property="og:article:modified_time" content="2021-01-27">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="BUUCTF">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      MRCTF2020之套娃
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-01-27T03:54:18.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-01-27</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/CTF题解/" class="post-meta-link">CTF题解</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>546 words</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <p><strong>知识点</strong></p>
+<p>​          - <code>PHP</code>在解析查询字符串时会将所有参数转换为有效地变量名,此时</p>
+<ol>
+<li> 它会删除空白符</li>
+<li>将某些字符转化为下划线(包括空格)<ul>
+<li>字符串换行符 可以表示字符串的结尾</li>
+</ul>
+</li>
+</ol>
+<p><strong>解题</strong></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115457.png" alt="image-20210111173533621" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115457.png" class="lozad post-image"></p>
+<pre class="highlight"><code class="hljs php">$query = $_SERVER[<span class="hljs-string">&#x27;QUERY_STRING&#x27;</span>];<br><br> <span class="hljs-keyword">if</span>( substr_count($query, <span class="hljs-string">&#x27;_&#x27;</span>) !== <span class="hljs-number">0</span> || substr_count($query, <span class="hljs-string">&#x27;%5f&#x27;</span>) != <span class="hljs-number">0</span> )&#123;<br>    <span class="hljs-keyword">die</span>(<span class="hljs-string">&#x27;Y0u are So cutE!&#x27;</span>);<br>&#125;<br> <span class="hljs-keyword">if</span>($_GET[<span class="hljs-string">&#x27;b_u_p_t&#x27;</span>] !== <span class="hljs-string">&#x27;23333&#x27;</span> &amp;&amp; preg_match(<span class="hljs-string">&#x27;/^23333$/&#x27;</span>, $_GET[<span class="hljs-string">&#x27;b_u_p_t&#x27;</span>]))&#123;<br>    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;you are going to the next ~&quot;</span>;<br>&#125;<br></code></pre>
+
+<p>打开题目查看源代码,发现一处注释,获取到源码一份</p>
+<p>第一个<code>if</code>不能出现<code>_</code>,可以根据字符串解析特性绕过</p>
+<p>第二个<code>if</code>要求 不能出现<code>23333</code>,但是正则要能匹配的到,而且第二个<code>if</code>中正则<code>^</code>和<code>$</code>代表的是行的开头和结尾,所以可以使用换行来绕过</p>
+<p>构造<code>paylaod</code></p>
+<pre class="highlight"><code class="hljs angelscript">?b%<span class="hljs-number">20</span>u%<span class="hljs-number">20</span>p%<span class="hljs-number">20</span>t=<span class="hljs-number">23333</span>%<span class="hljs-number">0</span>a<br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115458.png" alt="image-20210111175528130" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115458.png" class="lozad post-image"></p>
+<p>提示FLAG在<code>secrettw.php</code>访问</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115459.png" alt="image-20210111175715584" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115459.png" class="lozad post-image"></p>
+<p>提示本地<code>ip</code>访问</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115500.png" alt="image-20210111175909212" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115500.png" class="lozad post-image"></p>
+<p>写入<code>XFF</code>头没有效果,但是发现有一串<code>JS</code>代码放到控制台看看</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115501.png" alt="image-20210111180259056" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115501.png" class="lozad post-image"></p>
+<p>看来是提示<code>post</code>传参</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115502.png" alt="image-20210111180611506" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115502.png" class="lozad post-image"></p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <br>error_reporting(<span class="hljs-number">0</span>); <br><span class="hljs-keyword">include</span> <span class="hljs-string">&#x27;takeip.php&#x27;</span>;<br>ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;.&#x27;</span>); <br><span class="hljs-keyword">include</span> <span class="hljs-string">&#x27;flag.php&#x27;</span>;<br><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_POST[<span class="hljs-string">&#x27;Merak&#x27;</span>]))&#123; <br>    highlight_file(<span class="hljs-keyword">__FILE__</span>); <br>    <span class="hljs-keyword">die</span>(); <br>&#125; <br><br><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span>(<span class="hljs-params">$v</span>)</span>&#123; <br>    $v = base64_decode($v); <br>    $re = <span class="hljs-string">&#x27;&#x27;</span>; <br>    <span class="hljs-keyword">for</span>($i=<span class="hljs-number">0</span>;$i&lt;strlen($v);$i++)&#123; <br>        $re .= chr ( ord ($v[$i]) + $i*<span class="hljs-number">2</span> ); <br>    &#125; <br>    <span class="hljs-keyword">return</span> $re; <br>&#125;<br><span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;Local access only!&#x27;</span>.<span class="hljs-string">&quot;&lt;br/&gt;&quot;</span>;<br>$ip = getIp();<br><span class="hljs-keyword">if</span>($ip!=<span class="hljs-string">&#x27;127.0.0.1&#x27;</span>)<br><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;Sorry,you don&#x27;t have permission!  Your ip is :&quot;</span>.$ip;<br><span class="hljs-keyword">if</span>($ip === <span class="hljs-string">&#x27;127.0.0.1&#x27;</span> &amp;&amp; file_get_contents($_GET[<span class="hljs-string">&#x27;2333&#x27;</span>]) === <span class="hljs-string">&#x27;todat is a happy day&#x27;</span> )&#123;<br><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;Your REQUEST is:&quot;</span>.change($_GET[<span class="hljs-string">&#x27;file&#x27;</span>]);<br><span class="hljs-keyword">echo</span> file_get_contents(change($_GET[<span class="hljs-string">&#x27;file&#x27;</span>])); &#125;<br><span class="hljs-meta">?&gt;</span> <br></code></pre>
+
+<p>随便传入一个Merak的值,获得了当前页面的源码</p>
+<p><code>change</code>函数,相当于对于传入的值进行了 一次加密</p>
+<p>想要获得FLAG,要满足以下几点要求:</p>
+<ol>
+<li><code>IP</code>等于<code>127.0.0.1</code>,这里<code>XFF</code>不能用,可以使用<code>client-ip</code></li>
+<li>2333的值等于<code>todat is a happy day</code>,而且要绕过<code>file_get_contents</code>函数,可以使用伪协议绕过</li>
+<li>经过<code>change</code>函数加密后,仍然可以读取<code>flag.php</code></li>
+</ol>
+<p>构造<code>change</code>的解密EXP</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115503.png" alt="image-20210111181831278" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115503.png" class="lozad post-image"></p>
+<p>因此,传参改<code>ip</code>即可</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115504.png" alt="image-20210111182612431" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115504.png" class="lozad post-image"></p>
+<p>得到FLAG</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/MRCTF2020%E4%B9%8B%E5%A5%97%E5%A8%83/">https://husins.cn/MRCTF2020%E4%B9%8B%E5%A5%97%E5%A8%83/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/GKCTF2020之EZ三剑客-EzWeb/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">Prev</div>
+        
+        <div class="nav-title">GKCTF2020之EZ三剑客-EzWeb </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/极客大挑战-2019之RCE-ME/" class="nav-link">
+      <div>
+        <div class="nav-label">Next</div>
+        
+        <div class="nav-title">极客大挑战 2019之RCE ME </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>37</span>
+    <span>Posts</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>2</span>
+    <span>Categories</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>6</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/FBCTF2019之RCEService/"><div class="recent-posts-item-content">FBCTF2019之RCEService</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/GKCTF2020之EZ三剑客-EzWeb/"><div class="recent-posts-item-content">GKCTF2020之EZ三剑客-EzWeb</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/MRCTF2020之套娃/"><div class="recent-posts-item-content">MRCTF2020之套娃</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/极客大挑战-2019之RCE-ME/"><div class="recent-posts-item-content">极客大挑战 2019之RCE ME</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

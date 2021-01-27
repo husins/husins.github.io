@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>BJDCTF2020之EasySearch</title>
+  
+  
+  <meta property="og:title" content="BJDCTF2020之EasySearch">
+  
+  
+  <meta property="og:url" content="https://husins.cn/BJDCTF2020%E4%B9%8BEasySearch/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-01-27">
+  <meta property="og:article:modified_time" content="2021-01-27">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="BUUCTF">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      BJDCTF2020之EasySearch
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-01-27T03:48:23.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-01-27</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/CTF题解/" class="post-meta-link">CTF题解</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>367 words</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <p><strong>知识点</strong></p>
+<p>ssi注入:<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40657585/article/details/84260844">https://blog.csdn.net/qq_40657585/article/details/84260844</a></p>
+<p><strong>解题</strong></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114859.png" alt="image-20210103145021073" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114859.png" class="lozad post-image"></p>
+<p>打开题目,又是一个普普通通的登录框,尝试sql注入,没有效果,选择扫目录</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114900.png" alt="image-20210103145120855" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114900.png" class="lozad post-image"></p>
+<p>扫到一个源码泄露</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114901.png" alt="image-20210103145140709" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114901.png" class="lozad post-image"></p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br>	ob_start();<br>	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_hash</span>(<span class="hljs-params"></span>)</span>&#123;<br>		$chars = <span class="hljs-string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&amp;*()+-&#x27;</span>;<br>		$random = $chars[mt_rand(<span class="hljs-number">0</span>,<span class="hljs-number">73</span>)].$chars[mt_rand(<span class="hljs-number">0</span>,<span class="hljs-number">73</span>)].$chars[mt_rand(<span class="hljs-number">0</span>,<span class="hljs-number">73</span>)].$chars[mt_rand(<span class="hljs-number">0</span>,<span class="hljs-number">73</span>)].$chars[mt_rand(<span class="hljs-number">0</span>,<span class="hljs-number">73</span>)];<span class="hljs-comment">//Random 5 times</span><br>		$content = uniqid().$random;<br>		<span class="hljs-keyword">return</span> sha1($content); <br>	&#125;<br>    header(<span class="hljs-string">&quot;Content-Type: text/html;charset=utf-8&quot;</span>);<br>	***<br>    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_POST[<span class="hljs-string">&#x27;username&#x27;</span>]) <span class="hljs-keyword">and</span> $_POST[<span class="hljs-string">&#x27;username&#x27;</span>] != <span class="hljs-string">&#x27;&#x27;</span> )<br>    &#123;<br>        $admin = <span class="hljs-string">&#x27;6d0bc1&#x27;</span>;<br>        <span class="hljs-keyword">if</span> ( $admin == substr(md5($_POST[<span class="hljs-string">&#x27;password&#x27;</span>]),<span class="hljs-number">0</span>,<span class="hljs-number">6</span>)) &#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;script&gt;alert(&#x27;[+] Welcome to manage system&#x27;)&lt;/script&gt;&quot;</span>;<br>            $file_shtml = <span class="hljs-string">&quot;public/&quot;</span>.get_hash().<span class="hljs-string">&quot;.shtml&quot;</span>;<br>            $shtml = fopen($file_shtml, <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">or</span> <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;Unable to open file!&quot;</span>);<br>            $text = <span class="hljs-string">&#x27;</span><br><span class="hljs-string">            ***</span><br><span class="hljs-string">            ***</span><br><span class="hljs-string">            &lt;h1&gt;Hello,&#x27;</span>.$_POST[<span class="hljs-string">&#x27;username&#x27;</span>].<span class="hljs-string">&#x27;&lt;/h1&gt;</span><br><span class="hljs-string">            ***</span><br><span class="hljs-string">			***&#x27;</span>;<br>            fwrite($shtml,$text);<br>            fclose($shtml);<br>            ***<br>			<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;[!] Header  error ...&quot;</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;script&gt;alert(&#x27;[!] Failed&#x27;)&lt;/script&gt;&quot;</span>;<br>            <br>    &#125;<span class="hljs-keyword">else</span><br>    &#123;<br>	***<br>    &#125;<br>	***<br><span class="hljs-meta">?&gt;</span><br></code></pre>
+
+<p>用户名密码判断处发现一个MD5截断比较,反手掏出自己珍藏多年的脚本跑一下</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114902.png" alt="image-20210103145610599" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114902.png" class="lozad post-image"></p>
+<p>跑到一个,尝试一下.</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114903.png" alt="image-20210103145650050" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114903.png" class="lozad post-image"></p>
+<p>登陆成功,下一步,这里我就卡住了,没有思路,看了别人的wp:</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114904.png" alt="image-20210103150230403" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114904.png" class="lozad post-image"></p>
+<p>查看数据包,我们发现一个url,直接访问试试</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114905.png" alt="image-20210103150420345" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114905.png" class="lozad post-image"></p>
+<p>输出了 用户名 时间戳和IP,观察文件后缀名发现,可能存在ssi注入,抓包尝试</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114906.png" alt="image-20210103151205755" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114906.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114907.png" alt="image-20210103151158785" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114907.png" class="lozad post-image"></p>
+<p>没有flag文件返回上级目录看看</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114908.png" alt="image-20210103151416054" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114908.png" class="lozad post-image"></p>
+<p>得到flag文件名,读取flag</p>
+<pre class="highlight"><code class="hljs html"><span class="hljs-comment">&lt;!--#exec cmd=&quot;cat ../flag_990c66bf85a09c664f0b6741840499b2&quot;--&gt;</span><br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114909.png" alt="image-20210103151605943" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114909.png" class="lozad post-image"></p>
+<p>得到flag.</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/BJDCTF2020%E4%B9%8BEasySearch/">https://husins.cn/BJDCTF2020%E4%B9%8BEasySearch/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/MRCTF2020之Ezpop/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">Prev</div>
+        
+        <div class="nav-title">MRCTF2020之Ezpop </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/NCTF2019之True-XML-cookbook/" class="nav-link">
+      <div>
+        <div class="nav-label">Next</div>
+        
+        <div class="nav-title">NCTF2019之True XML cookbook </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>37</span>
+    <span>Posts</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>2</span>
+    <span>Categories</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>6</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/FBCTF2019之RCEService/"><div class="recent-posts-item-content">FBCTF2019之RCEService</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/GKCTF2020之EZ三剑客-EzWeb/"><div class="recent-posts-item-content">GKCTF2020之EZ三剑客-EzWeb</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/MRCTF2020之套娃/"><div class="recent-posts-item-content">MRCTF2020之套娃</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/极客大挑战-2019之RCE-ME/"><div class="recent-posts-item-content">极客大挑战 2019之RCE ME</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

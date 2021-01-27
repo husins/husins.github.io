@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>浅析SSRF漏洞</title>
+  
+  
+  <meta property="og:title" content="浅析SSRF漏洞">
+  
+  
+  <meta property="og:url" content="https://husins.cn/%E6%B5%85%E6%9E%90SSRF/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-01-26">
+  <meta property="og:article:modified_time" content="2021-01-26">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="SSRF">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      浅析SSRF漏洞
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-01-26T06:34:50.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-01-26</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/漏洞总结/" class="post-meta-link">漏洞总结</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.4k words</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/SSRF/" class="post-meta-link">SSRF</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h1 id="SSRF-Server-side-Request-Forge-服务端请求伪造"><a href="#SSRF-Server-side-Request-Forge-服务端请求伪造" class="headerlink" title="SSRF(Server-side Request Forge, 服务端请求伪造)"></a>SSRF(Server-side Request Forge, 服务端请求伪造)</h1><h2 id="什么是-SSRF"><a href="#什么是-SSRF" class="headerlink" title="什么是 SSRF"></a>什么是 <code>SSRF</code></h2><p>他是一种由攻击者构造形成由服务端发起请求的一个安全漏洞。一般情况下，<code>SSRF</code>攻击的目标是从外网无法访问的内部系统。（正是因为它是由服务端发起的，所以它能够请求到与它相连而与外网隔离的内部系统）</p>
+<h2 id="SSRF-形成的原因"><a href="#SSRF-形成的原因" class="headerlink" title="SSRF 形成的原因"></a><code>SSRF</code> 形成的原因</h2><p>​    大多数<code>SSRF</code>产生的原因是<strong>服务端提供了从其他服务器获取数据的功能,并且没有对目的地址做过滤和限制</strong>.比如从指定URL地址获取网页文本内容，加载指定地址的图片，下载</p>
+<p><strong>代码案例</strong></p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-comment">//curl造成的SSRF</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">curl</span>(<span class="hljs-params">$url</span>)</span>&#123;  <br>    $ch = curl_init();<br>    curl_setopt($ch, CURLOPT_URL, $url);<br>    curl_setopt($ch, CURLOPT_HEADER, <span class="hljs-number">0</span>);<br>    curl_exec($ch);<br>    curl_close($ch);<br>&#125;<br><br>$url = $_GET[<span class="hljs-string">&#x27;url&#x27;</span>];<br>curl($url);  <br><br><span class="hljs-comment">//file_get_contents造成的SSRF</span><br>$url = $_GET[<span class="hljs-string">&#x27;url&#x27;</span>];<br><span class="hljs-keyword">echo</span> file_get_contents($url);<br><br><span class="hljs-comment">//fsockopen造成的SSRF</span><br><span class="hljs-meta">&lt;?php</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Getfile</span>(<span class="hljs-params">$host, $port, $link</span>)</span>&#123;<br>    $fp = fsockopen($host, intval($port), $errno, $errstr, <span class="hljs-number">30</span>);<br>    <span class="hljs-keyword">if</span>(!$fp)&#123;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;<span class="hljs-subst">$errstr</span> (error number <span class="hljs-subst">$errno</span>) \n&quot;</span>;<br>    &#125;<span class="hljs-keyword">else</span>&#123;<br>        $out = <span class="hljs-string">&quot;GET <span class="hljs-subst">$link</span> HTTP/1.1\r\n&quot;</span>;<br>        $out .= <span class="hljs-string">&quot;HOST <span class="hljs-subst">$host</span> \r\n&quot;</span>;<br>        $out .= <span class="hljs-string">&quot;Connection: Close\r\n\r\n&quot;</span>;<br>        $out .= <span class="hljs-string">&quot;\r\n&quot;</span>;<br>        fwrite($fp, $out);<br>        $content = <span class="hljs-string">&#x27;&#x27;</span>;<br>        <span class="hljs-keyword">while</span>(!feof($fp))&#123;<br>            $contents .= fgets($fp, <span class="hljs-number">1024</span>);<br>        &#125;<br>        fclose($fp);<br>        <span class="hljs-keyword">return</span> $contents;<br>    &#125;<br>&#125;<br></code></pre>
+
+
+
+<h2 id="SSRF攻击流程"><a href="#SSRF攻击流程" class="headerlink" title="SSRF攻击流程"></a><code>SSRF</code>攻击流程</h2><p>假定 A 为一个公司的主站,所有人都可以访问, B 是该公司内部的一个网站,只有公司能为能够访问,且与 A 能够相互访问。</p>
+<p><strong>正常用户：</strong></p>
+<p>输入A网站URL –&gt; 发送请求 –&gt; A服务器接受请求，并处理 –&gt;返回用户响应</p>
+<p>此时如果A服务器接受请求是没有经过严格的过滤，导致A能够在B上获取数据，就会产生<code>SSRF</code></p>
+<p><strong>例如:</strong></p>
+<p>正常用户输入的URL:<code>http://www.123.com/index.php?img=www.aaa.com/1.jpg</code></p>
+<p>攻击者将<code>www.aaa.com</code>换成B的内网地址,如果存在就返回<code>1XX</code> | <code>2XX</code>的状态码,不存在就会出现其他的状态码</p>
+<p><strong>因此,<code>SSRF</code>漏洞就是通过篡改获取资源的请求发送给服务器，但是服务器并没有检测这个请求是否合法的，然后服务器以他的身份来访问其他服务器的资源。</strong></p>
+<h2 id="SSRF可能出现的地方-核心就是调用外部资源的所有参数都有可能"><a href="#SSRF可能出现的地方-核心就是调用外部资源的所有参数都有可能" class="headerlink" title="SSRF可能出现的地方(核心就是调用外部资源的所有参数都有可能)"></a><code>SSRF</code>可能出现的地方(核心就是调用外部资源的所有参数都有可能)</h2><ol>
+<li><p>社交分享功能：获取超链接的标题等内容进行显示</p>
+</li>
+<li><p>转码服务：通过URL地址把原地址的网页内容调优使其适合手机屏幕浏览</p>
+</li>
+<li><p>在线翻译：给网址翻译对应网页的内容</p>
+</li>
+<li><p>图片加载/下载：例如富文本编辑器中的点击下载图片到本地；通过URL地址加载或下载图片</p>
+</li>
+<li><p>图片/文章收藏功能：主要其会取URL地址中title以及文本的内容作为显示以求一个好的用户体验</p>
+</li>
+<li><p>网站采集，网站抓取的地方：一些网站会针对你输入的<code>url</code>进行一些信息采集工作</p>
+</li>
+<li><p>数据库内置功能：数据库的比如<code>mongodb</code>的<code>copyDatabase</code>函数</p>
+</li>
+<li><p>邮件系统：比如接收邮件服务器地址</p>
+</li>
+<li><p>编码处理, 属性信息处理，文件处理：比如<code>fpmg，ImageMagick，docx，pdf，xml</code>处理器等</p>
+</li>
+<li><p>从远程服务器请求资源（<code>upload from url 如discuz！；import &amp; expost rss feed 如web blog；使用了xml引擎对象的地方 如wordpress xmlrpc.php</code>）</p>
+</li>
+<li><p>将url换成我们的DNS服务器，通过查看DNFlog平台日志看是否有服务器ip判断是否有SSRF漏洞</p>
+</li>
+</ol>
+<h2 id="SSRF的危害"><a href="#SSRF的危害" class="headerlink" title="SSRF的危害"></a><code>SSRF</code>的危害</h2><ol>
+<li><p>让服务端去访问相应的网址</p>
+</li>
+<li><p>让服务端去访问自己所处内网的一些指纹文件来判断是否存在相应的<code>cms</code></p>
+</li>
+<li><p>可以使用<code>file、dict、gopher[11]、ftp</code>协议进行请求访问相应的文件</p>
+</li>
+<li><p>攻击内网web应用（可以向内部任意主机的任意端口发送精心构造的数据包<code>payload</code>）</p>
+</li>
+<li><p>判断内网主机是否存活：方法是访问看是否有端口开放</p>
+</li>
+<li><p><code>DoS</code>攻击（请求大文件，始终保持连接<code>keep-alive always</code>）</p>
+</li>
+</ol>
+<h2 id="SSRF漏洞利用"><a href="#SSRF漏洞利用" class="headerlink" title="SSRF漏洞利用"></a><code>SSRF</code>漏洞利用</h2><ul>
+<li><p><code>dict</code>协议,操作<code>redis</code>服务,例如:<code>dict://127.0.0.1:6379/info</code></p>
+</li>
+<li><p><code>file</code>协议,任意文件读取,例如:<code>file:///etc/passwd</code></p>
+</li>
+<li><p><code>gopher</code>,反弹<code>shell</code>,例如<code>gopher://127.0.0.1:6379/xxxxxxx</code></p>
+</li>
+<li><p><code>http</code>,结合<code>burpsuite</code>探测内网存活主机</p>
+</li>
+</ul>
+<h2 id="SSRF利用小技巧"><a href="#SSRF利用小技巧" class="headerlink" title="SSRF利用小技巧"></a><code>SSRF</code>利用小技巧</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="http://baidu.com@www.baidu.com/%E4%B8%8Ehttp://www.baidu.com/%E8%AF%B7%E6%B1%82%E6%97%B6%E6%98%AF%E7%9B%B8%E5%90%8C%E7%9A%84">http://baidu.com@www.baidu.com/与http://www.baidu.com/请求时是相同的</a></p>
+</li>
+<li><p>各种IP地址的进制转换</p>
+</li>
+<li><p>URL跳转绕过：<a target="_blank" rel="noopener" href="http://www.hackersb.cn/redirect.php?url=http://192.168.0.1/">http://www.hackersb.cn/redirect.php?url=http://192.168.0.1/</a></p>
+</li>
+<li><p>短网址绕过 <a target="_blank" rel="noopener" href="http://t.cn/RwbLKDx">http://t.cn/RwbLKDx</a></p>
+</li>
+<li><p>xip.io来绕过：<a target="_blank" rel="noopener" href="http://xxx.192.168.0.1.xip.io/">http://xxx.192.168.0.1.xip.io/</a> == 192.168.0.1 (xxx 任意,利用重定向）</p>
+</li>
+<li><p>限制了子网段，可以加 :80 端口绕过。<a target="_blank" rel="noopener" href="http://tieba.baidu.com/f/commit/share/openShareApi?url=http://10.42.7.78:80">http://tieba.baidu.com/f/commit/share/openShareApi?url=http://10.42.7.78:80</a></p>
+</li>
+<li><p>例如 <a target="_blank" rel="noopener" href="http://10.153.138.81/ts.php">http://10.153.138.81/ts.php</a> , 修复时容易出现的获取host时以/分割来确定host，但这样可以用 <a target="_blank" rel="noopener" href="http://abc@10.153.138.81/">http://abc@10.153.138.81/</a> 绕过</p>
+</li>
+</ol>
+<h2 id="SSRF如何防护"><a href="#SSRF如何防护" class="headerlink" title="SSRF如何防护"></a><code>SSRF</code>如何防护</h2><ul>
+<li>黑名单<ol>
+<li>过滤10.0.0.0/8 、172.16.0.0/12、192.168.0.0/16、localhost私有地址、IPv6地址</li>
+<li>过滤file:///、dict://、gopher://、ftp:// 危险协议</li>
+<li>对返回的内容进行识别</li>
+</ol>
+</li>
+<li>白名单<ol>
+<li>使用地址白名单</li>
+<li>对返回内容进行识别</li>
+<li>需要使用互联网资源（比如贴吧使用网络图片）而无法使用白名单的情况：首先禁用 CURLOPT_FOLLOWLOCATION；然后通过域名获取目标ip，并过滤内部ip；最后识别返回的内容是否与假定内容一致</li>
+</ol>
+</li>
+</ul>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%B5%85%E6%9E%90SSRF/">https://husins.cn/%E6%B5%85%E6%9E%90SSRF/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/浅析SSTI漏洞/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">Prev</div>
+        
+        <div class="nav-title">浅析SSTI漏洞 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/浅析文件包含漏洞/" class="nav-link">
+      <div>
+        <div class="nav-label">Next</div>
+        
+        <div class="nav-title">浅析文件包含漏洞 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF-Server-side-Request-Forge-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-text">SSRF(Server-side Request Forge, 服务端请求伪造)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SSRF"><span class="toc-text">什么是 SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF-%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">SSRF 形成的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">SSRF攻击流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E5%9C%B0%E6%96%B9-%E6%A0%B8%E5%BF%83%E5%B0%B1%E6%98%AF%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E8%B5%84%E6%BA%90%E7%9A%84%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%83%BD%E6%9C%89%E5%8F%AF%E8%83%BD"><span class="toc-text">SSRF可能出现的地方(核心就是调用外部资源的所有参数都有可能)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="toc-text">SSRF的危害</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">SSRF漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%88%A9%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">SSRF利用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%A6%82%E4%BD%95%E9%98%B2%E6%8A%A4"><span class="toc-text">SSRF如何防护</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>37</span>
+    <span>Posts</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>2</span>
+    <span>Categories</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>6</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF-Server-side-Request-Forge-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-text">SSRF(Server-side Request Forge, 服务端请求伪造)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SSRF"><span class="toc-text">什么是 SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF-%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">SSRF 形成的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">SSRF攻击流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E5%9C%B0%E6%96%B9-%E6%A0%B8%E5%BF%83%E5%B0%B1%E6%98%AF%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E8%B5%84%E6%BA%90%E7%9A%84%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%83%BD%E6%9C%89%E5%8F%AF%E8%83%BD"><span class="toc-text">SSRF可能出现的地方(核心就是调用外部资源的所有参数都有可能)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="toc-text">SSRF的危害</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">SSRF漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%88%A9%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">SSRF利用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%A6%82%E4%BD%95%E9%98%B2%E6%8A%A4"><span class="toc-text">SSRF如何防护</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF-Server-side-Request-Forge-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-text">SSRF(Server-side Request Forge, 服务端请求伪造)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SSRF"><span class="toc-text">什么是 SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF-%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">SSRF 形成的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">SSRF攻击流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E5%9C%B0%E6%96%B9-%E6%A0%B8%E5%BF%83%E5%B0%B1%E6%98%AF%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E8%B5%84%E6%BA%90%E7%9A%84%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%83%BD%E6%9C%89%E5%8F%AF%E8%83%BD"><span class="toc-text">SSRF可能出现的地方(核心就是调用外部资源的所有参数都有可能)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="toc-text">SSRF的危害</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">SSRF漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%88%A9%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">SSRF利用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%A6%82%E4%BD%95%E9%98%B2%E6%8A%A4"><span class="toc-text">SSRF如何防护</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/FBCTF2019之RCEService/"><div class="recent-posts-item-content">FBCTF2019之RCEService</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/GKCTF2020之EZ三剑客-EzWeb/"><div class="recent-posts-item-content">GKCTF2020之EZ三剑客-EzWeb</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/MRCTF2020之套娃/"><div class="recent-posts-item-content">MRCTF2020之套娃</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/极客大挑战-2019之RCE-ME/"><div class="recent-posts-item-content">极客大挑战 2019之RCE ME</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

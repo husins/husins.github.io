@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>BUUCTF之[HCTF 2018]admin</title>
+  
+  
+  <meta property="og:title" content="BUUCTF之[HCTF 2018]admin">
+  
+  
+  <meta property="og:url" content="https://husins.cn/BUUCTF%E4%B9%8B-HCTF-2018-admin/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-01-26">
+  <meta property="og:article:modified_time" content="2021-01-26">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="BUUCTF">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      BUUCTF之[HCTF 2018]admin
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-01-26T09:35:54.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-01-26</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/CTF题解/" class="post-meta-link">CTF题解</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>566 words</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><p><strong>flask–session存储机制</strong></p>
+<p>实现</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> timedelta<br><br><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, request, redirect, url_for, session<br><br>app = Flask(__name__)<br><br><span class="hljs-comment">#设置我们的秘钥 用于对sessionid进行加密</span><br><br>app.secret_key=<span class="hljs-string">&quot;lH4WHi5amT0ZqykHvLofllRJu3UN1uzmeUN0z2IiacjDUb5TLU3ZTtUP5VJqgkMY&quot;</span><br><br><span class="hljs-comment">#设置session的过期时间</span><br><br>app.permanent_session_lifetime = timedelta(days=<span class="hljs-number">7</span>)<br><br></code></pre>
+
+<p>调用</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-meta">@app.route(&#x27;/&#x27;)</span><br><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">index</span>():</span><br><br>    <span class="hljs-comment">#访问首页时 如果是登录状态 则 提示欢迎信息</span><br><br>    username = session.get(<span class="hljs-string">&quot;username&quot;</span>)<br><br>    <span class="hljs-keyword">if</span> username:<br><br>        <span class="hljs-comment">#删除session的数据</span><br><br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;欢迎回来%s&quot;</span>%username<br><br>    <span class="hljs-comment">#如果没有登录 跳转到登录页面</span><br><br>    <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&quot;login&quot;</span>))<br><br><span class="hljs-comment">#登录的路由</span><br><br><span class="hljs-meta">@app.route(&#x27;/login&#x27;, methods=[&#x27;GET&#x27;, &#x27;POST&#x27;])</span><br><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">login</span>():</span><br><br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;GET&#x27;</span>:<br><br>        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;login.html&quot;</span>) <span class="hljs-keyword">as</span> f:<br><br>            login_html_content = f.read()<br><br>            <span class="hljs-keyword">return</span> login_html_content<br><br>    <span class="hljs-comment">#Post处理</span><br><br>    username = request.form.get(<span class="hljs-string">&quot;username&quot;</span>)<br><br>    password = request.form.get(<span class="hljs-string">&quot;password&quot;</span>)<br><br>    <span class="hljs-comment">#验证登录信息</span><br><br>    <span class="hljs-keyword">if</span> username == <span class="hljs-string">&#x27;zx&#x27;</span> <span class="hljs-keyword">and</span> password==<span class="hljs-string">&quot;123&quot;</span>:<br><br>        print(<span class="hljs-string">&quot;登录成功&quot;</span>)<br><br>        <span class="hljs-comment">#将我们的状态数据保存到session</span><br><br>        session[<span class="hljs-string">&quot;username&quot;</span>] = username<br><br>        <span class="hljs-comment">#设置session是否持久化（） 默认为false（会话结束自动删除）</span><br><br>        session.permanent = <span class="hljs-literal">True</span><br><br>        <span class="hljs-comment"># #删除字典数据</span><br><br>        <span class="hljs-comment"># session.pop(&quot;username&quot;)</span><br><br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&quot;index&quot;</span>))<br><br>    <span class="hljs-keyword">else</span>:<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;登录失败&#x27;</span><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br><br>    app.run()<br><br></code></pre>
+
+
+
+<h2 id="解题："><a href="#解题：" class="headerlink" title="解题："></a>解题：</h2><p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYEfs"><img src="https://s3.ax1x.com/2021/01/26/sjYEfs.png" alt="sjYEfs.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYEfs.png" class="lozad post-image"></a></p>
+<p>登陆页面 发现有两个功能 登陆和注册 分别检测 两个功能。 登陆功能没有什么点可以用，只能注册，注册一个test用户登陆看看！</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYelq"><img src="https://s3.ax1x.com/2021/01/26/sjYelq.png" alt="sjYelq.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYelq.png" class="lozad post-image"></a></p>
+<p>发现有四个功能，返回主页面，提交留言，修改密码，<u>登出</u></p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYQ7F"><img src="https://s3.ax1x.com/2021/01/26/sjYQ7F.png" alt="sjYQ7F.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYQ7F.png" class="lozad post-image"></a></p>
+<p>在查看一手源代码，看来在提示要admin登陆了。</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYJpR"><img src="https://s3.ax1x.com/2021/01/26/sjYJpR.png" alt="sjYJpR.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYJpR.png" class="lozad post-image"></a></p>
+<p>修改密码页面存在提示，github上面应该是他的源码，去嫖一手。</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYt6x"><img src="https://s3.ax1x.com/2021/01/26/sjYt6x.png" alt="sjYt6x.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYt6x.png" class="lozad post-image"></a></p>
+<p>这里用到了session，因此可以想到篡改session实现admin登陆</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYanK"><img src="https://s3.ax1x.com/2021/01/26/sjYanK.png" alt="sjYanK.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYanK.png" class="lozad post-image"></a></p>
+<p>得到 test账号的session 尝试解密</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYrhd"><img src="https://s3.ax1x.com/2021/01/26/sjYrhd.png" alt="sjYrhd.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYrhd.png" class="lozad post-image"></a></p>
+<p>根据脚本得到解密串:</p>
+<p><code>&#123;&#39;_fresh&#39;: True, &#39;_id&#39;: b&#39;4765861b12328638115df84695bf022807817e5be468dac58d116b15882a91c9cddde6325d9304aabdb9f3edee5ecb738aaa789431c594eb94e960a90fb685ee&#39;, &#39;csrf_token&#39;: b&#39;ebf9106fbf271c5ec3868795513cda5fc4589b28&#39;, &#39;image&#39;: b&#39;9L7q&#39;, &#39;name&#39;: &#39;test&#39;, &#39;user_id&#39;: &#39;10&#39;&#125;</code></p>
+<p>将text改为admin可得</p>
+<p><code>&#123;&#39;_fresh&#39;: True, &#39;_id&#39;: b&#39;4765861b12328638115df84695bf022807817e5be468dac58d116b15882a91c9cddde6325d9304aabdb9f3edee5ecb738aaa789431c594eb94e960a90fb685ee&#39;, &#39;csrf_token&#39;: b&#39;ebf9106fbf271c5ec3868795513cda5fc4589b28&#39;, &#39;image&#39;: b&#39;9L7q&#39;, &#39;name&#39;: &#39;admin&#39;, &#39;user_id&#39;: &#39;10&#39;&#125;</code></p>
+<p>根据flask session的特性 我们还必须找到 加密所需的密钥</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/18308497-1ce73d28fe8a6e5c.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/webp" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://upload-images.jianshu.io/upload_images/18308497-1ce73d28fe8a6e5c.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/webp" class="lozad post-image"></p>
+<p>在 config.py中找到密钥</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYcct"><img src="https://s3.ax1x.com/2021/01/26/sjYcct.png" alt="sjYcct.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYcct.png" class="lozad post-image"></a></p>
+<p>在得到加密之后的字符串，将其为session赋值即可admin登陆。</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjYWB8"><img src="https://s3.ax1x.com/2021/01/26/sjYWB8.png" alt="sjYWB8.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjYWB8.png" class="lozad post-image"></a></p>
+<p>得到flag。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/BUUCTF%E4%B9%8B-HCTF-2018-admin/">https://husins.cn/BUUCTF%E4%B9%8B-HCTF-2018-admin/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/BUUCTF之-SUCTF-2019-CheckIn/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">Prev</div>
+        
+        <div class="nav-title">BUUCTF之[SUCTF 2019]CheckIn </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/浅析SSTI漏洞/" class="nav-link">
+      <div>
+        <div class="nav-label">Next</div>
+        
+        <div class="nav-title">浅析SSTI漏洞 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%EF%BC%9A"><span class="toc-text">解题：</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>37</span>
+    <span>Posts</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>2</span>
+    <span>Categories</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>6</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%EF%BC%9A"><span class="toc-text">解题：</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%EF%BC%9A"><span class="toc-text">解题：</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/FBCTF2019之RCEService/"><div class="recent-posts-item-content">FBCTF2019之RCEService</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/GKCTF2020之EZ三剑客-EzWeb/"><div class="recent-posts-item-content">GKCTF2020之EZ三剑客-EzWeb</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/MRCTF2020之套娃/"><div class="recent-posts-item-content">MRCTF2020之套娃</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/极客大挑战-2019之RCE-ME/"><div class="recent-posts-item-content">极客大挑战 2019之RCE ME</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

