@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>GWCTF 2019之枯燥的抽奖</title>
+  
+  
+  <meta property="og:title" content="GWCTF 2019之枯燥的抽奖">
+  
+  
+  <meta property="og:url" content="http://example.com/2021/01/27/GWCTF-2019%E4%B9%8B%E6%9E%AF%E7%87%A5%E7%9A%84%E6%8A%BD%E5%A5%96/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-01-27">
+  <meta property="og:article:modified_time" content="2021-01-27">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="BUUCTF">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      GWCTF 2019之枯燥的抽奖
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-01-27T03:51:54.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-01-27</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/CTF题解/" class="post-meta-link">CTF题解</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>495 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <p><strong>知识点</strong></p>
+<p><code>mt_rand</code>:每一次调用mt_rand()函数的时候，都会检查一下系统有没有播种。（播种是由mt_srand()函数完成的），当随机种子生成后，后面生成的随机数都会根据这个随机种子生成。所以前面也说到，同一个种子下随机生成的随机数值是相同的。因此,这是一个伪随机数,只要知道随机种子的值,就能破解.</p>
+<p>爆破工具:<a target="_blank" rel="noopener" href="https://github.com/lepiaf/php_mt_seed">https://github.com/lepiaf/php_mt_seed</a></p>
+<p>伪随机数文章:<a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/192012.html">https://www.freebuf.com/vuls/192012.html</a></p>
+<p><strong>解题</strong></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" alt="image-20210110171648147" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" class="lozad post-image"></p>
+<p>猜字符串都游戏,看到输入框,尝试<code>SQL</code>注入和<code>XSS</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" alt="image-20210110171808812" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" alt="image-20210110171841807" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" class="lozad post-image"></p>
+<p>查看源码:</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" alt="image-20210110172059562" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" class="lozad post-image"></p>
+<p>前端传参处,存在一处<code>url</code>,尝试访问</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" alt="image-20210110172302172" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" class="lozad post-image"></p>
+<p>得到抽奖程序的源码,真不错,分析一下源码</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-comment">#这不是抽奖程序的源代码！不许看！</span><br>header(<span class="hljs-string">&quot;Content-Type: text/html;charset=utf-8&quot;</span>);<br>session_start();<br><span class="hljs-keyword">if</span>(!<span class="hljs-keyword">isset</span>($_SESSION[<span class="hljs-string">&#x27;seed&#x27;</span>]))&#123;<br>$_SESSION[<span class="hljs-string">&#x27;seed&#x27;</span>]=rand(<span class="hljs-number">0</span>,<span class="hljs-number">999999999</span>);<br>&#125;<br><br>mt_srand($_SESSION[<span class="hljs-string">&#x27;seed&#x27;</span>]);<br>$str_long1 = <span class="hljs-string">&quot;abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>;<br>$str=<span class="hljs-string">&#x27;&#x27;</span>;<br>$len1=<span class="hljs-number">20</span>;<br><span class="hljs-keyword">for</span> ( $i = <span class="hljs-number">0</span>; $i &lt; $len1; $i++ )&#123;<br>    $str.=substr($str_long1, mt_rand(<span class="hljs-number">0</span>, strlen($str_long1) - <span class="hljs-number">1</span>), <span class="hljs-number">1</span>);       <br>&#125;<br>$str_show = substr($str, <span class="hljs-number">0</span>, <span class="hljs-number">10</span>);<br><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;p id=&#x27;p1&#x27;&gt;&quot;</span>.$str_show.<span class="hljs-string">&quot;&lt;/p&gt;&quot;</span>;<br><br><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_POST[<span class="hljs-string">&#x27;num&#x27;</span>]))&#123;<br>    <span class="hljs-keyword">if</span>($_POST[<span class="hljs-string">&#x27;num&#x27;</span>]===$str)&#123;x<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;p id=flag&gt;抽奖，就是那么枯燥且无味，给你flag&#123;xxxxxxxxx&#125;&lt;/p&gt;&quot;</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span>&#123;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;p id=flag&gt;没抽中哦，再试试吧&lt;/p&gt;&quot;</span>;<br>    &#125;<br>&#125;<br>show_source(<span class="hljs-string">&quot;check.php&quot;</span>);<br></code></pre>
+
+<p>通过阅读源码可发现,通过随机数,生成一个长度为20的密码,输入密码就可以获取flag.</p>
+<p>首先将得到的前十个密码解析成<code>php_mt_seed</code>需要的参数Exp如下:</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br>$pass_now = <span class="hljs-string">&quot;FpCyLNvPOj&quot;</span>;<br>$allowable_characters = <span class="hljs-string">&#x27;abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&#x27;</span>;<br><br>$length = strlen($allowable_characters) - <span class="hljs-number">1</span>;<br><br><span class="hljs-keyword">for</span> ($j = <span class="hljs-number">0</span>; $j &lt; strlen($pass_now); $j++) &#123;<br>    <span class="hljs-keyword">for</span> ($i = <span class="hljs-number">0</span>; $i &lt; $length; $i++) &#123;<br>        <span class="hljs-keyword">if</span> ($pass_now[$j] == $allowable_characters[$i]) &#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;<span class="hljs-subst">$i</span> <span class="hljs-subst">$i</span> 0 <span class="hljs-subst">$length</span> &quot;</span>;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" alt="image-20210110183201547" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115228.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115235.png" alt="image-20210110184125595" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115235.png" class="lozad post-image"></p>
+<p>利用工具爆破得到种子,根据种子构造解密字符串的Exp:</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115236.png" alt="image-20210110184328827" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115236.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115237.png" alt="image-20210110184343976" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115237.png" class="lozad post-image"></p>
+<p>最终得到Flag.</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://example.com/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://example.com/2021/01/27/GWCTF-2019%E4%B9%8B%E6%9E%AF%E7%87%A5%E7%9A%84%E6%8A%BD%E5%A5%96/">http://example.com/2021/01/27/GWCTF-2019%E4%B9%8B%E6%9E%AF%E7%87%A5%E7%9A%84%E6%8A%BD%E5%A5%96/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/2021/01/27/极客大挑战-2019之RCE-ME/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">极客大挑战 2019之RCE ME </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/2021/01/27/MRCTF2020之Ezpop/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">MRCTF2020之Ezpop </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>37</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>2</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>6</span>
+    <span>标签</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">34</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/2021/01/27/FBCTF2019之RCEService/"><div class="recent-posts-item-content">FBCTF2019之RCEService</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/2021/01/27/GKCTF2020之EZ三剑客-EzWeb/"><div class="recent-posts-item-content">GKCTF2020之EZ三剑客-EzWeb</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/2021/01/27/MRCTF2020之套娃/"><div class="recent-posts-item-content">MRCTF2020之套娃</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-27</div>
+        <a href="/2021/01/27/极客大挑战-2019之RCE-ME/"><div class="recent-posts-item-content">极客大挑战 2019之RCE ME</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
