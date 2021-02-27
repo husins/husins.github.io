@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>浅析无参数RCE</title>
+  <title>浅析命令执行漏洞</title>
   
   
-  <meta property="og:title" content="浅析无参数RCE">
+  <meta property="og:title" content="浅析命令执行漏洞">
   
   
-  <meta property="og:url" content="https://husins.cn/%E6%B5%85%E6%9E%90%E6%97%A0%E5%8F%82%E6%95%B0RCE/index.html">
+  <meta property="og:url" content="https://husins.cn/%E6%B5%85%E6%9E%90%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,8 +22,8 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-02-02">
-  <meta property="og:article:modified_time" content="2021-02-02">
+  <meta property="og:article:published_time" content="2021-02-28">
+  <meta property="og:article:modified_time" content="2021-02-28">
   <meta property="og:article:author" content="Husins">
   
   
@@ -179,13 +179,13 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      浅析无参数RCE
+      浅析命令执行漏洞
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-02-02T15:08:08.000Z">
+    <time datetime="2021-02-27T18:40:03.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-02-02</span>
+      <span>2021-02-28</span>
     </time>
     
     <span class="dot"></span>
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>744 words</span>
+    <span>1.4k words</span>
     
   </div>
   
@@ -211,86 +211,60 @@
   
   </header>
   <div id="section" class="post-content">
-    <h2 id="什么是无参数RCE"><a href="#什么是无参数RCE" class="headerlink" title="什么是无参数RCE"></a>什么是无参数RCE</h2><pre class="highlight"><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-string">&#x27;;&#x27;</span> === preg_replace(<span class="hljs-string">&#x27;/[a-z,_]+\((?R)?\)/&#x27;</span>, <span class="hljs-literal">NULL</span>, $_GET[<span class="hljs-string">&#x27;exp&#x27;</span>])&#123;<br>    <span class="hljs-keyword">eval</span>($_GET[<span class="hljs-string">&#x27;exp&#x27;</span>]);<br>    &#125;<br></code></pre>
-
-<p>如上，只使用函数，且函数不能带有参数，这里有种种限制：比如我们选择的函数必须能接受其括号内函数的返回值；使用的函数规定必须参数为空或者为一个参数。比如：</p>
-<pre class="highlight"><code class="hljs php">a();<br>a(b());<br>a(b(c()));<br></code></pre>
-
-<h2 id="无参数RCE中的正则"><a href="#无参数RCE中的正则" class="headerlink" title="无参数RCE中的正则"></a>无参数RCE中的正则</h2><p><strong>正则可以分为三个部分：</strong></p>
-<pre><code>1.  `[a-z,_]+\( 直到递归前面可以看作一个匹配整体，用来匹配所有小写字母下划线和左括号`
-2.  `(?R)? 递归部分看作一个匹配整体,效果是用来递归匹配`
-3.  `\) 递归后面的看作一个匹配整体，用来匹配右括号`</code></pre>
-<pre class="highlight"><code class="hljs php">a( <span class="hljs-comment">//匹配上面第一个匹配整体，然后进入第一次递归</span><br>    b( <span class="hljs-comment">//匹配上面第一个匹配整体，进入第二次递归</span><br>        c( <span class="hljs-comment">//匹配上面第一个匹配整体，进入第三次递归</span><br>            <span class="hljs-comment">//没有匹配第一个匹配整体，递归停止</span><br>        ) <span class="hljs-comment">//匹配第二次递归剩下的表达式，即第三个匹配的整体\),</span><br>    )   <span class="hljs-comment">//匹配第一次递归剩下的表达式，即\),</span><br>) <span class="hljs-comment">//匹配原表达式剩下的表达式，即\),</span><br></code></pre>
-
-<p>*<em>(?R)，(?R)?，(?R)<em>，(?R)+的区别</em></em></p>
-<ol>
-<li><p>(?R) ， (?R)+ 这两个表达式是匹配不到东西的,因为每次匹配的时候都会至少运行一次递归，无法终止，所以匹配不到任何东西。 </p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223342.png" alt="image-20210202223342752" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223342.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223409.png" alt="image-20210202223409570" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223409.png" class="lozad post-image"></p>
-</li>
+    <h4 id="什么是命令执行漏洞"><a href="#什么是命令执行漏洞" class="headerlink" title="什么是命令执行漏洞"></a>什么是命令执行漏洞</h4><p>命令执行漏洞（<code>RCE</code>):指的是攻击者可以直接在Web应用中执行系统命令，从而获取敏感信息或者拿下shell权限等，一系列危害系统安全的行为。</p>
+<h4 id="命令执行漏洞形成的原因"><a href="#命令执行漏洞形成的原因" class="headerlink" title="命令执行漏洞形成的原因"></a>命令执行漏洞形成的原因</h4><p>在编写Web端代码的时候，我们常常需要调用一些系统自带的命令，与计算机的底层进行交互。由此，很多脚本语言，设置了很多自带的函数，如<code>PHP</code>中的<code>system，exec，shell_exec</code>等，当用户可以控制命令执行函数中的参数时，将可注入恶意系统命令到正常命令中，造成命令执行攻击。</p>
+<h4 id="命令执行漏洞的攻击流程"><a href="#命令执行漏洞的攻击流程" class="headerlink" title="命令执行漏洞的攻击流程"></a>命令执行漏洞的攻击流程</h4><p>当脚本语言存在可以执行系统命令的函数的地方，例如：</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210228022309.png" alt="image-20210228022308982" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210228022309.png" class="lozad post-image"></p>
+<p>此时即可利用这些函数执行系统操作，从而达到攻击的效果</p>
+<h4 id="命令执行漏洞常用函数"><a href="#命令执行漏洞常用函数" class="headerlink" title="命令执行漏洞常用函数"></a>命令执行漏洞常用函数</h4><p><strong>1. string system( string $command[, int &amp;$return_var] )</strong> </p>
+<p>函数执行 command 参数所指定的命令，并且输出执行结果。 </p>
+<p><strong>2. string exec( string $command[, array &amp;$output[, int &amp;$return_var]] )</strong> </p>
+<p>exec() 执行 command 参数所指定的命令。 </p>
+<p><strong>3. string shell_exec( string $cmd)</strong> </p>
+<p>通过 shell 环境执行命令，并且将完整的输出以字符串的方式返回。 </p>
+<p><strong>4. void passthru( string $command[, int &amp;$return_var] )</strong> </p>
+<p>执行外部程序并且显示原始输出。 </p>
+<p><strong>5. 反引号</strong></p>
+<p>例如<code>ls</code>，反引号的内容会被当做系统命令执行，其中内部就是执行了shell_exec()函数进行处理。</p>
+<p><strong>6. void pcntl_exec( string $path[, array $args[, array $envs]] )</strong> </p>
+<p>pcntl是php的多进程处理扩展，在处理大量任务的情况下会使用到，pcntl需要额外安装。$path为可执行程序路径 (/bin/bash)。$args表示传递给$path程序的参数。 例如pcntl_exec(“/bin/bash” , array(“whoami”)); </p>
+<p><strong>7. resource popen( string $command, string $mode)</strong> </p>
+<p>打开一个指向进程的管道，该进程由派生给定的 command 命令执行而产生。 例如popen(‘whoami &gt;&gt; 123.txt’, ‘r’); </p>
+<p><strong>8. resource proc_open( string $cmd, array $descriptorspec, array &amp;$pipes[, string $cwd[, array $env[, array $other_options]]] )</strong> </p>
+<p>执行一个命令，并且打开用来输入/输出的文件指针。类似 popen() 函数，但是 proc_open() 提供了更加强大的控制程序执行的能力</p>
+<h4 id="命令执行漏洞的危害（只要是系统命令能够产生的操作）"><a href="#命令执行漏洞的危害（只要是系统命令能够产生的操作）" class="headerlink" title="命令执行漏洞的危害（只要是系统命令能够产生的操作）"></a>命令执行漏洞的危害（只要是系统命令能够产生的操作）</h4><ol>
+<li>继承Web服务程序的权限去执行系统命令或读写文件</li>
+<li>反弹shell</li>
+<li>控制整个网站甚至控制服务器</li>
+<li>进一步内网渗透</li>
 </ol>
-<ol start="2">
-<li>(?R)?,递归0次或1次，非贪婪，只能匹配a(b(c()))这种一层套一个函数的。</li>
+<h4 id="命令执行漏洞利用"><a href="#命令执行漏洞利用" class="headerlink" title="命令执行漏洞利用"></a>命令执行漏洞利用</h4><ol>
+<li>存在回显示的话，可以直接读取各种配置文件，密码文件，数据库连接文件等等</li>
+<li>遇到不回显的情况，最可靠的方法使用时间延迟推断，类似与盲注的方法。通过一些命令的延时作用来判断漏洞的存在，例如ping命令</li>
+<li>不能在浏览器直接看到回显，可将命令重定向到当前目录下的文件中并查看。或者用TFTP上传工具到服务器，用telnet和netcat建立反向shell，用mail通过SMTP发送结果给自己的计算机</li>
+<li>查看自己的权限，可以提升自己权限，访问敏感数据或控制服务器。</li>
+<li>文件写入，上传一句话木马，得到服务器权限</li>
 </ol>
-<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223054.png" class="lozad post-image"src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223054.png"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223136.png" alt="image-20210202223136407" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223136.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223219.png" alt="image-20210202223219488" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223219.png" class="lozad post-image"></p>
-<ol start="3">
-<li>(?R)*，递归0次或多次，贪婪，可以匹配a(b(c()d()))</li>
+<h4 id="命令执行利用的小技巧"><a href="#命令执行利用的小技巧" class="headerlink" title="命令执行利用的小技巧"></a>命令执行利用的小技巧</h4><p><strong>白盒测试</strong></p>
+<p>可以代码审计的话,直接搜索含有常用的调用函数system、exec、shell_exec、passthru、pcntl_exec、popen、proc_open,以及反引号也可以执行命令。然后联系上下文看看有没有课控制的输入参数,可控制的点指的是,我们可以传入参数,如果在代码里写死了命令<code>&lt;?php system(&quot;ipconfig&quot;):?&gt;</code>就是无法利用的,针对可控制的参数,在进一步绕过过滤限制。</p>
+<p><strong>黑盒测试</strong></p>
+<p>黑盒挖掘任意命令执行漏洞要点在于找到可能调用第三方命令的业务场景，很多时候要半蒙半猜的去想后台代码是什么样的。通常在图片处理、大文件压缩、文件格式转化、日志处理以及数据库导出等功能比较容易调用一些小脚本进行辅助处理。能够确定某个业务模块使用到了第三方工具，就可以进一步对命令注入语句进行分析，是否存在各种限制，最常见的用各种fuzz推测后端对输入进行了哪些限制，对其进行相应的绕过。构造出可以利用的payload。</p>
+<h4 id="命令执行防护的方法"><a href="#命令执行防护的方法" class="headerlink" title="命令执行防护的方法"></a>命令执行防护的方法</h4><ol>
+<li>尽量少用执行命令的函数或者直接禁用</li>
+<li>参数值尽量使用引号包括</li>
+<li>在使用动态函数之前，确保使用的函数是指定的函数之一</li>
+<li>在进入执行命令的函数/方法之前，对参数进行过滤，对敏感字符进行转义</li>
+<li>能使用脚本解决的工作，不要调用其他程序处理。尽量少用执行命令的函数，并在disable_functions中禁用</li>
+<li>对于可控点是程序参数的情况下，使用escapeshellcmd函数进行过滤，对于可控点是程序参数值的情况下，使用escapeshellarg函数进行过滤</li>
+<li>参数的值尽量使用引号包裹，并在拼接前调用addslashes进行转义而针对由特定第三方组件引发的漏洞，我们要做的就是及时打补丁，修改安装时的默认配置。</li>
 </ol>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223246.png" alt="image-20210202223246625" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223246.png" class="lozad post-image"></p>
-<h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><p><strong>数组操作</strong></p>
-<p><code>array_flip():</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223946.png" alt="image-20210202223946462" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223946.png" class="lozad post-image"></p>
-<p><code>array_rand:</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223758.png" alt="image-20210202223758505" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202223758.png" class="lozad post-image"></p>
-<p><code>array_reverse:</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210202224226.png" alt="image-20210202224226089" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210202224226.png" class="lozad post-image"></p>
-<p><strong>数组指针相关操作</strong></p>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.current.php">current()</a> - 返回数组中的当前指针的值，默认是数组第一个元素，别名<code>pos</code></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.end.php">end()</a> - 将数组的内部指针指向最后一个单元</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.key.php">key()</a> - 从关联数组中取得键名</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.each.php">each()</a> - 返回数组中当前的键／值对并将数组指针向前移动一步</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.prev.php">prev()</a> - 将数组的内部指针倒回一位</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.reset.php">reset()</a> - 将数组的内部指针指向第一个单元</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/function.next.php">next()</a> - 将数组中的内部指针向前移动一位</p>
-</li>
-</ul>
-<p><strong>其他函数</strong></p>
-<ul>
-<li><code>localeconv()</code> 返回一包含本地数字及货币格式信息的数组。而数组第一项就是”.”</li>
-<li><code>get_defined_vars()</code>此函数返回一个包含所有已定义变量列表的多维数组，这些变量包括环境变量、服务器变量和用户定义的变量。</li>
-<li><code>getenv</code>,获取一个环境变量的值</li>
-</ul>
-<p><strong>文件相关操作函数</strong></p>
-<ul>
-<li><p><code>file_get_contents()</code>将整个文件读入一个字符串</p>
-</li>
-<li><p><code>readfile()</code>读取文件并写入到输出缓冲。</p>
-</li>
-<li><p><code>highlight_file()</code>语法高亮显示一个文件</p>
-</li>
-<li><p><code>scandir(</code> <code>.</code> ), 返回一个数组，包含当前目录下的文件和目录</p>
-</li>
-<li><p><code>getcwd()</code>取得当前工作目录。</p>
-</li>
-<li><p><code>chdir($directory)</code>，将 <code>PHP </code>的当前目录改为 directory。</p>
-</li>
-</ul>
 
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%B5%85%E6%9E%90%E6%97%A0%E5%8F%82%E6%95%B0RCE/">https://husins.cn/%E6%B5%85%E6%9E%90%E6%97%A0%E5%8F%82%E6%95%B0RCE/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%B5%85%E6%9E%90%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/">https://husins.cn/%E6%B5%85%E6%9E%90%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -298,25 +272,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/浅析无列名注入/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">Prev</div>
-        
-        <div class="nav-title">“浅析无列名注入” </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/SWPU2019之Web1/" class="nav-link">
+    <a href="/信息收集/" class="nav-link">
       <div>
         <div class="nav-label">Next</div>
         
-        <div class="nav-title">SWPU2019之Web1 </div>
+        <div class="nav-title">信息收集 </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -327,7 +289,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">什么是无参数RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0RCE%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99"><span class="toc-text">无参数RCE中的正则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">常用函数</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E"><span class="toc-text">什么是命令执行漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">命令执行漏洞形成的原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">命令执行漏洞的攻击流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">命令执行漏洞常用函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%8D%B1%E5%AE%B3%EF%BC%88%E5%8F%AA%E8%A6%81%E6%98%AF%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4%E8%83%BD%E5%A4%9F%E4%BA%A7%E7%94%9F%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="toc-text">命令执行漏洞的危害（只要是系统命令能够产生的操作）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">命令执行漏洞利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%88%A9%E7%94%A8%E7%9A%84%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">命令执行利用的小技巧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E9%98%B2%E6%8A%A4%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">命令执行防护的方法</span></a></li></ol>
 </div></main>
           <aside class="left-column">
             
@@ -360,7 +322,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">什么是无参数RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0RCE%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99"><span class="toc-text">无参数RCE中的正则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">常用函数</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E"><span class="toc-text">什么是命令执行漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">命令执行漏洞形成的原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">命令执行漏洞的攻击流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">命令执行漏洞常用函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%8D%B1%E5%AE%B3%EF%BC%88%E5%8F%AA%E8%A6%81%E6%98%AF%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4%E8%83%BD%E5%A4%9F%E4%BA%A7%E7%94%9F%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="toc-text">命令执行漏洞的危害（只要是系统命令能够产生的操作）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">命令执行漏洞利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%88%A9%E7%94%A8%E7%9A%84%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">命令执行利用的小技巧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E9%98%B2%E6%8A%A4%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">命令执行防护的方法</span></a></li></ol>
     </div>
   </article>
   
@@ -440,7 +402,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E5%8F%82%E6%95%B0RCE"><span class="toc-text">什么是无参数RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0RCE%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99"><span class="toc-text">无参数RCE中的正则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">常用函数</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E"><span class="toc-text">什么是命令执行漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">命令执行漏洞形成的原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">命令执行漏洞的攻击流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-text">命令执行漏洞常用函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%8D%B1%E5%AE%B3%EF%BC%88%E5%8F%AA%E8%A6%81%E6%98%AF%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4%E8%83%BD%E5%A4%9F%E4%BA%A7%E7%94%9F%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="toc-text">命令执行漏洞的危害（只要是系统命令能够产生的操作）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">命令执行漏洞利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%88%A9%E7%94%A8%E7%9A%84%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">命令执行利用的小技巧</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E9%98%B2%E6%8A%A4%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">命令执行防护的方法</span></a></li></ol>
   </article>
   
   
