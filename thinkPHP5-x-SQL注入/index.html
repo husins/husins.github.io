@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>thinkPHP5.x SQL注入</title>
+  
+  
+  <meta property="og:title" content="thinkPHP5.x SQL注入">
+  
+  
+  <meta property="og:url" content="https://husins.cn/thinkPHP5-x-SQL%E6%B3%A8%E5%85%A5/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-03-21">
+  <meta property="og:article:modified_time" content="2021-03-21">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="CVE-2018-16385">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      thinkPHP5.x SQL注入
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-03-21T11:48:18.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-03-21</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/漏洞复现/" class="post-meta-link">漏洞复现</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>909 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/CVE-2018-16385/" class="post-meta-link">CVE-2018-16385</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h3 id="漏洞信息"><a href="#漏洞信息" class="headerlink" title="漏洞信息"></a>漏洞信息</h3><p><strong>漏洞编号：</strong><code>CVE-2018-16385</code></p>
+<p><strong>影响版本：</strong><code>ThinkPHP框架&lt;5.0.16</code></p>
+<p><strong>漏洞类型：</strong><code>SQL注入漏洞</code></p>
+<h3 id="ThinkPHP基础知识"><a href="#ThinkPHP基础知识" class="headerlink" title="ThinkPHP基础知识"></a>ThinkPHP基础知识</h3><p><strong>ThinkPHP目录结构：</strong></p>
+<pre class="highlight"><code class="hljs css">├─<span class="hljs-selector-tag">application</span> 应用目录（可设置）<br><br>│ ├─<span class="hljs-selector-tag">common</span> 公共模块目录（可更改）<br><br>│ ├─<span class="hljs-selector-tag">index</span> 模块目录(可更改)<br><br>│ │ ├─<span class="hljs-selector-tag">config</span><span class="hljs-selector-class">.php</span> 模块配置文件<br><br>│ │ ├─<span class="hljs-selector-tag">common</span><span class="hljs-selector-class">.php</span> 模块函数文件<br><br>│ │ ├─<span class="hljs-selector-tag">controller</span> 控制器目录<br><br>│ │ ├─<span class="hljs-selector-tag">model</span> 模型目录<br><br>│ │ ├─<span class="hljs-selector-tag">view</span> 视图目录<br><br>│ │ └─ ... 更多类库目录<br><br>│ ├─<span class="hljs-selector-tag">command</span><span class="hljs-selector-class">.php</span> 命令行工具配置文件<br><br>│ ├─<span class="hljs-selector-tag">common</span><span class="hljs-selector-class">.php</span> 应用公共（函数）文件<br><br>│ ├─<span class="hljs-selector-tag">config</span><span class="hljs-selector-class">.php</span> 应用（公共）配置文件<br><br>│ ├─<span class="hljs-selector-tag">database</span><span class="hljs-selector-class">.php</span> 数据库配置文件<br><br>│ ├─<span class="hljs-selector-tag">tags</span><span class="hljs-selector-class">.php</span> 应用行为扩展定义文件<br><br>│ └─<span class="hljs-selector-tag">route</span><span class="hljs-selector-class">.php</span> 路由配置文件<br><br>├─<span class="hljs-selector-tag">extend</span> 扩展类库目录（可定义）<br><br>├─<span class="hljs-selector-tag">public</span> <span class="hljs-selector-tag">WEB</span> 部署目录（对外访问目录）<br><br>│ ├─<span class="hljs-selector-tag">static</span> 静态资源存放目录(<span class="hljs-selector-tag">css</span>,<span class="hljs-selector-tag">js</span>,<span class="hljs-selector-tag">image</span>)<br><br>│ ├─<span class="hljs-selector-tag">index</span><span class="hljs-selector-class">.php</span> 应用入口文件<br><br>│ ├─<span class="hljs-selector-tag">router</span><span class="hljs-selector-class">.php</span> 快速测试文件<br><br>│ └─<span class="hljs-selector-class">.htaccess</span> 用于 <span class="hljs-selector-tag">apache</span> 的重写<br><br>├─<span class="hljs-selector-tag">runtime</span> 应用的运行时目录（可写，可设置）<br><br>├─<span class="hljs-selector-tag">vendor</span> 第三方类库目录（<span class="hljs-selector-tag">Composer</span>）<br><br>├─<span class="hljs-selector-tag">thinkphp</span> 框架系统目录<br><br>│ ├─<span class="hljs-selector-tag">lang</span> 语言包目录<br><br>│ ├─<span class="hljs-selector-tag">library</span> 框架核心类库目录<br><br>│ │ ├─<span class="hljs-selector-tag">think</span> <span class="hljs-selector-tag">Think</span> 类库包目录<br><br>│ │ └─<span class="hljs-selector-tag">traits</span> 系统 <span class="hljs-selector-tag">Traits</span> 目录<br><br>│ ├─<span class="hljs-selector-tag">tpl</span> 系统模板目录<br><br>│ ├─<span class="hljs-selector-class">.htaccess</span> 用于 <span class="hljs-selector-tag">apache</span> 的重写<br><br>│ ├─<span class="hljs-selector-class">.travis</span><span class="hljs-selector-class">.yml</span> <span class="hljs-selector-tag">CI</span> 定义文件<br><br>│ ├─<span class="hljs-selector-tag">base</span><span class="hljs-selector-class">.php</span> 基础定义文件<br><br>│ ├─<span class="hljs-selector-tag">composer</span><span class="hljs-selector-class">.json</span> <span class="hljs-selector-tag">composer</span> 定义文件<br><br>│ ├─<span class="hljs-selector-tag">console</span><span class="hljs-selector-class">.php</span> 控制台入口文件<br><br>│ ├─<span class="hljs-selector-tag">convention</span><span class="hljs-selector-class">.php</span> 惯例配置文件<br><br>│ ├─<span class="hljs-selector-tag">helper</span><span class="hljs-selector-class">.php</span> 助手函数文件（可选）<br><br>│ ├─<span class="hljs-selector-tag">LICENSE</span><span class="hljs-selector-class">.txt</span> 授权说明文件<br><br>│ ├─<span class="hljs-selector-tag">phpunit</span><span class="hljs-selector-class">.xml</span> 单元测试配置文件<br><br>│ ├─<span class="hljs-selector-tag">README</span><span class="hljs-selector-class">.md</span> <span class="hljs-selector-tag">README</span> 文件<br><br>│ └─<span class="hljs-selector-tag">start</span><span class="hljs-selector-class">.php</span> 框架引导文件<br><br>├─<span class="hljs-selector-tag">build</span><span class="hljs-selector-class">.php</span> 自动生成定义文件（参考）<br><br>├─<span class="hljs-selector-tag">composer</span><span class="hljs-selector-class">.json</span> <span class="hljs-selector-tag">composer</span> 定义文件<br><br>├─<span class="hljs-selector-tag">LICENSE</span><span class="hljs-selector-class">.txt</span> 授权说明文件<br><br>├─<span class="hljs-selector-tag">README</span><span class="hljs-selector-class">.md</span> <span class="hljs-selector-tag">README</span> 文件<br><br>├─<span class="hljs-selector-tag">think</span> 命令行入口文件<br></code></pre>
+
+<p><strong>ThinkPHP助手函数：</strong></p>
+<p><img src="https://pic-1252849007.cos.ap-guangzhou.myqcloud.com/thinkphp_sql/4.png" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://pic-1252849007.cos.ap-guangzhou.myqcloud.com/thinkphp_sql/4.png" class="lozad post-image"></p>
+<p><img src="https://pic-1252849007.cos.ap-guangzhou.myqcloud.com/thinkphp_sql/5.png" alt="img" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://pic-1252849007.cos.ap-guangzhou.myqcloud.com/thinkphp_sql/5.png" class="lozad post-image"></p>
+<h3 id="漏洞环境搭建"><a href="#漏洞环境搭建" class="headerlink" title="漏洞环境搭建"></a>漏洞环境搭建</h3><p><strong>PHPstudy：</strong><code>Apache2.4.39 + MySQL5.7.26 + PHP7.3.4nts</code></p>
+<p><strong>PHPstrom + Xdebug</strong></p>
+<ol>
+<li><p>数据库创建</p>
+<pre class="highlight"><code class="hljs sql"><span class="hljs-keyword">create</span> <span class="hljs-keyword">database</span> thinkphp;<br><span class="hljs-keyword">use</span> thinkphp;<br><span class="hljs-keyword">create</span> <span class="hljs-keyword">table</span> <span class="hljs-keyword">users</span>(<br>    <span class="hljs-keyword">id</span> <span class="hljs-built_in">int</span> primary <span class="hljs-keyword">key</span> auto_increment,<br>    username <span class="hljs-built_in">varchar</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">not</span> <span class="hljs-literal">null</span><br>);<br></code></pre>
+
+
+
+</li>
+</ol>
+<ol start="2">
+<li><p><code>application/index/controller/Index.php</code> 文件代码设置</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">index</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Index</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        $username = request()-&gt;get(<span class="hljs-string">&#x27;username/a&#x27;</span>);<br>        db(<span class="hljs-string">&#x27;users&#x27;</span>)-&gt;insert([<span class="hljs-string">&#x27;username&#x27;</span> =&gt; $username]);<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;Update success&#x27;</span>;<br>    &#125;<br><br>&#125;<br></code></pre>
+
+
+
+</li>
+</ol>
+<ol start="3">
+<li><p><code>\thinkphp\application\database.php</code>数据库配置</p>
+<p>填写配置文件中，自己数据库的相关信息，即可。</p>
+</li>
+<li><p><code>\thinkphp\application\config.php</code>调试模式配置</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-comment">// 应用调试模式</span><br><span class="hljs-string">&#x27;app_debug&#x27;</span>              =&gt; <span class="hljs-literal">true</span>,<br><span class="hljs-comment">// 应用Trace</span><br><span class="hljs-string">&#x27;app_trace&#x27;</span>              =&gt; <span class="hljs-literal">true</span>,<br></code></pre>
+
+
+
+</li>
+</ol>
+<ol start="5">
+<li>打入payload：<code>http://localhost/thinkphp5/public/index.php/index/index?username[0]=inc&amp;username[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;username[2]=1</code></li>
+</ol>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210321185741.png" alt="image-20210321185741748" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210321185741.png" class="lozad post-image"></p>
+<p>出现如图所示的页面，及漏洞环境配置成功</p>
+<h3 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210321192322.png" alt="image-20210321192322468" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210321192322.png" class="lozad post-image"></p>
+<p>在关键传参处设置断点，使用动态调试进行跟踪。</p>
+<p>我们知道 <strong>insert</strong> 方法存在漏洞，那就查看 <strong>insert</strong> 方法的具体实现。该方法位于 <code>thinkphp\library\think\db\Builder.php</code> 文件中，我们可以看到在函数开头调用了 <strong>parseData</strong> 方法，并将 <strong>$data</strong> 作为参数传入</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210321193537.png" alt="image-20210321193537595" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210321193537.png" class="lozad post-image"></p>
+<p>我们跟进 parseData 方法，该方法也在 <code>thinkphp\library\think\db\Builder.php</code> 文件中。可以看到，在结尾处有个switch语句，而且进入该语句后，会跳到case ‘inc’的地方，这里关键就是看看 $this-&gt;parseKey 是否有对 <strong>$val[1]</strong> 变量进行过滤了，因为 <strong>$val[1]</strong> 变量就是我们payload中的<code>updatexml(1,concat(0x7,user(),0x7e),1) </code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210321193658.png" alt="image-20210321193658930" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210321193658.png" class="lozad post-image"></p>
+<p>继续跟进<strong>parseKey</strong>，发现没有任何过滤</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210321193934.png" alt="image-20210321193934613" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210321193934.png" class="lozad post-image"></p>
+<p>观察最开始的<code>insert</code>方法</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210321194047.png" alt="image-20210321194047347" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210321194047.png" class="lozad post-image"></p>
+<p>不难发现，我们的<code>payload</code>第一处传参<code>username[0]=inc</code> 是为了跳转到switch语句中的case ‘inc’，</p>
+<p>然后<code>username[1]</code>注入我们完整的payload，利用报错信息携带出来，这里没有对我们的SQL语句进行过滤，最后的<code>username[2]=1</code>就是很简单的为了完整传递参数。</p>
+<p>至此，ThinkPHP5的SQL注入漏洞复现完毕。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/thinkPHP5-x-SQL%E6%B3%A8%E5%85%A5/">https://husins.cn/thinkPHP5-x-SQL%E6%B3%A8%E5%85%A5/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/浅析Python反序列化/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">浅析Python反序列化 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%A1%E6%81%AF"><span class="toc-text">漏洞信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ThinkPHP%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-text">ThinkPHP基础知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">漏洞环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-text">漏洞分析</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>54</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>15</span>
+    <span>标签</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%A1%E6%81%AF"><span class="toc-text">漏洞信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ThinkPHP%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-text">ThinkPHP基础知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">漏洞环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-text">漏洞分析</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">41</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">9</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具使用">
+        <div class="categories-list-item">
+          工具使用
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/MISC">
+        <div class="categories-list-item">
+          MISC
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞复现">
+        <div class="categories-list-item">
+          漏洞复现
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
+    
+    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
+    
+    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
+    
+    <a href="\tags\信息收集" title="信息收集"><div class="tags-list-item">信息收集</div></a>
+    
+    <a href="\tags\ms17-010" title="ms17-010"><div class="tags-list-item">ms17-010</div></a>
+    
+    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
+    
+    <a href="\tags\JWT Pickle" title="JWT Pickle"><div class="tags-list-item">JWT Pickle</div></a>
+    
+    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
+    
+    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%A1%E6%81%AF"><span class="toc-text">漏洞信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ThinkPHP%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-text">ThinkPHP基础知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">漏洞环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-text">漏洞分析</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-21</div>
+        <a href="/thinkPHP5-x-SQL注入/"><div class="recent-posts-item-content">thinkPHP5.x SQL注入</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-19</div>
+        <a href="/浅析Python反序列化/"><div class="recent-posts-item-content">浅析Python反序列化</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-18</div>
+        <a href="/CISCN2019华北赛区-ikun/"><div class="recent-posts-item-content">CISCN2019华北赛区_ikun</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-16</div>
+        <a href="/浅析XXE外部实体注入漏洞/"><div class="recent-posts-item-content">浅析XXE外部实体注入漏洞</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
