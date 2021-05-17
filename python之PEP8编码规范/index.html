@@ -23,7 +23,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:article:published_time" content="2021-05-11">
-  <meta property="og:article:modified_time" content="2021-05-11">
+  <meta property="og:article:modified_time" content="2021-05-17">
   <meta property="og:article:author" content="Husins">
   
   
@@ -214,12 +214,12 @@
     <h1 id="Python之PEP8编码规范"><a href="#Python之PEP8编码规范" class="headerlink" title="Python之PEP8编码规范"></a>Python之PEP8编码规范</h1><h2 id="缩进"><a href="#缩进" class="headerlink" title="缩进"></a>缩进</h2><ul>
 <li><p>每一级缩进使用四个空格</p>
 </li>
-<li><p>续行应该与其包裹元素对其，要么使用圆括号，方括号和花括号内的隐试行连接，来垂直对其，要么使用挂航缩进对其。当使用挂行缩进时，应该考虑到第一行不应该有参数，以及使用缩进以区分自己是续行。</p>
+<li><p>续行应该与其包裹元素对其，要么使用圆括号，方括号和花括号内的隐试行连接，来垂直对其，要么使用挂行缩进对其。当使用挂行缩进时，应该考虑到第一行不应该有参数，以及使用缩进以区分自己是续行。</p>
 <p><strong>推荐：</strong></p>
 <pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 隐试行连接垂直对其</span><br>foo = long_function_name(var_one, var_two<br>                         var_three, var_four)<br><span class="hljs-comment"># 使用挂行缩进，第一行不存在参数，使用更多的缩进进行区分</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">long_function_name</span>(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">		var_one,</span></span><br><span class="hljs-function"><span class="hljs-params">		var_two,</span></span><br><span class="hljs-function"><span class="hljs-params">		var_three,</span></span><br><span class="hljs-function"><span class="hljs-params">		var_four</span>):</span><br>    print(<span class="hljs-string">&#x27;挂行缩进&#x27;</span>)<br></code></pre>
 
 <p><strong>不推荐：</strong></p>
-<pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 在不使用垂直对其时，进制吧参数放在第一行</span><br>foo = long_function_name(var_one, var_two<br>var_three, var_four)<br><span class="hljs-comment"># 当使用挂行缩进时，要增加缩进</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">long_function_name</span>(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">    var_one,</span></span><br><span class="hljs-function"><span class="hljs-params">    var_two,</span></span><br><span class="hljs-function"><span class="hljs-params">    var_three,</span></span><br><span class="hljs-function"><span class="hljs-params">    var_four</span>):</span><br>    print(<span class="hljs-string">&#x27;挂行缩进&#x27;</span>)<br></code></pre>
+<pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 在不使用垂直对其时，禁止把参数放在第一行</span><br>foo = long_function_name(var_one, var_two<br>var_three, var_four)<br><span class="hljs-comment"># 当使用挂行缩进时，要增加缩进</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">long_function_name</span>(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">    var_one,</span></span><br><span class="hljs-function"><span class="hljs-params">    var_two,</span></span><br><span class="hljs-function"><span class="hljs-params">    var_three,</span></span><br><span class="hljs-function"><span class="hljs-params">    var_four</span>):</span><br>    print(<span class="hljs-string">&#x27;挂行缩进&#x27;</span>)<br></code></pre>
 
 </li>
 </ul>
@@ -235,7 +235,7 @@
 <li><p>导入通常在分开的行，例如：</p>
 <pre class="highlight"><code class="hljs python"><span class="hljs-comment"># 推荐</span><br><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> sys<br><span class="hljs-keyword">for</span> subprocess <span class="hljs-keyword">import</span> Popen, PIPE<br><span class="hljs-comment"># 不推荐</span><br><span class="hljs-keyword">import</span> sys, os<br></code></pre>
 </li>
-<li><p>导入重视位于文件的顶部，在模块注释和文档字符串之后，在模块的全局变量与常量之前。</p>
+<li><p>导入注释位于文件的顶部，在模块注释和文档字符串之后，在模块的全局变量与常量之前。</p>
 </li>
 <li><p>大于应该按照以下 以下顺序分组：</p>
 <ol>
@@ -329,6 +329,18 @@
 </article>
 <div class="nav">
   
+  <div class="nav-item-prev">
+    <a href="/GXYCTF2019-BabySQli/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">Prev</div>
+        
+        <div class="nav-title">GXYCTF2019-BabySQli </div>
+        
+      </div>
+    </a>
+  </div>
+  
   
   <div class="nav-item-next">
     <a href="/upload-labs/" class="nav-link">
@@ -358,7 +370,7 @@
 <p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>58</span>
+    <span>59</span>
     <span>Posts</span>
   </a>
   <a class="author-categories-count" href="/categories">
@@ -392,7 +404,7 @@
       <a href="/categories/CTF题解">
         <div class="categories-list-item">
           CTF题解
-          <span class="categories-list-item-badge">41</span>
+          <span class="categories-list-item-badge">42</span>
         </div>
       </a>
     
@@ -444,9 +456,9 @@
     
     <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
     
-    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
-    
     <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
     
     <a href="\tags\python" title="python"><div class="tags-list-item">python</div></a>
     
@@ -495,6 +507,11 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-17</div>
+        <a href="/GXYCTF2019-BabySQli/"><div class="recent-posts-item-content">GXYCTF2019-BabySQli</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-05-11</div>
         <a href="/python之PEP8编码规范/"><div class="recent-posts-item-content">python之PEP8编码规范</div></a>
       </div>
@@ -507,11 +524,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-03-23</div>
         <a href="/namp常用命令/"><div class="recent-posts-item-content">namp常用命令</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2021-03-21</div>
-        <a href="/浅析代码执行漏洞/"><div class="recent-posts-item-content">浅析代码执行漏洞</div></a>
       </div>
     
   </div>

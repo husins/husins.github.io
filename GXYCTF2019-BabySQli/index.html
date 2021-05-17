@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title># BUUCTF之[极客大挑战 2019]BuyFlag</title>
+  <title>GXYCTF2019-BabySQli</title>
   
   
-  <meta property="og:title" content="# BUUCTF之[极客大挑战 2019]BuyFlag">
+  <meta property="og:title" content="GXYCTF2019-BabySQli">
   
   
-  <meta property="og:url" content="https://husins.cn/BUUCTF%E4%B9%8B-%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BuyFlag/index.html">
+  <meta property="og:url" content="https://husins.cn/GXYCTF2019-BabySQli/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,12 +22,12 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-01-26">
-  <meta property="og:article:modified_time" content="2021-01-26">
+  <meta property="og:article:published_time" content="2021-05-17">
+  <meta property="og:article:modified_time" content="2021-05-17">
   <meta property="og:article:author" content="Husins">
   
   
-  <meta property="og:article:tag" content="BUUCTF">
+  <meta property="og:article:tag" content="SQL">
   
   
   
@@ -179,13 +179,13 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      # BUUCTF之[极客大挑战 2019]BuyFlag
+      GXYCTF2019-BabySQli
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-26T09:48:06.000Z">
+    <time datetime="2021-05-17T08:45:43.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-01-26</span>
+      <span>2021-05-17</span>
     </time>
     
     <span class="dot"></span>
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>275 words</span>
+    <span>380 words</span>
     
   </div>
   
@@ -204,49 +204,59 @@
       <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
       
       
-        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+        <a href="/tags/SQL/" class="post-meta-link">SQL</a>
       
     </div>
   </div>
   
   </header>
   <div id="section" class="post-content">
-    <h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><p>is_numberic:可以使用%00和%20绕过</p>
-<p>strcmp()：这一个漏洞适用与5.3之前版本的php</p>
-<pre class="highlight"><code class="hljs php">strcmp(<span class="hljs-string">&#x27;str1&#x27;</span>,<span class="hljs-string">&#x27;str2&#x27;</span>)<br>    <span class="hljs-keyword">if</span>(str1&gt;str2) <span class="hljs-keyword">return</span> &gt;<span class="hljs-number">0</span><br>    <span class="hljs-keyword">if</span>(str1&lt;str2) <span class="hljs-keyword">return</span> &lt;<span class="hljs-number">0</span><br>    <span class="hljs-keyword">if</span>(str1 == str2) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br>    <span class="hljs-keyword">if</span>(str1 = arry[] &amp;&amp; str2 = <span class="hljs-keyword">string</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br></code></pre>
+    <p><strong>知识点：</strong></p>
+<p>​    当使用联合查询时，查询的数据不存在，联合查询就会暂时构造一个虚拟的数据。</p>
+<p><strong>解题：</strong></p>
+<p>​    <img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517154451618.png" alt="image-20210517154451618" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517154451618.png" class="lozad post-image"></p>
+<p>题目页面只给了一个登陆框，经过简单的测试，页面会跳转到<code>search.php</code>,并且存在三种情况</p>
+<ol>
+<li>用户名不为<code>admin</code>，回显 no user</li>
+<li>用户名为<code>admin</code>，回显 wrong pass!</li>
+<li>输入单引号数据库报错</li>
+</ol>
+<p>此外查看<code>search.php</code>页面的源代码，存在如下注释</p>
+<pre class="highlight"><code class="hljs base32">MMZFM422K5HDASKDN5TVU3SKOZRFGQRRMMZFM6KJJBSG6WSYJJWESSCWPJNFQSTVLFLTC3CJIQYGOSTZKJ2VSVZRNRFHOPJ5<br></code></pre>
+
+<p> <code>base32</code>解密得到，如下信息：</p>
+<pre class="highlight"><code class="hljs gcode">c<span class="hljs-number">2</span><span class="hljs-attr">VsZWN0</span>ICogZ<span class="hljs-symbol">nJvbSB1</span>c<span class="hljs-number">2</span>VyIHdoZXJlIHVzZXJuYW<span class="hljs-number">1</span>lID<span class="hljs-number">0</span>gJyRuYW<span class="hljs-number">1</span>lJw==<br></code></pre>
+
+<p><code>base64</code>解码得到，如下信息：</p>
+<pre class="highlight"><code class="hljs routeros">select * <span class="hljs-keyword">from</span><span class="hljs-built_in"> user </span>where username = <span class="hljs-string">&#x27;$name&#x27;</span><br></code></pre>
+
+<p>综合如上信息分析，不难看出，POST型SQL注入，而且一定存在 admin 这个用户</p>
+<p>使用SQLMAP 一把嗦，能够得到如下信息：</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517155532457.png" alt="image-20210517155532457" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517155532457.png" class="lozad post-image"></p>
+<p>​        </p>
+<p>尝试md5解密密码，发现密码挺复杂，根本解不出来！</p>
+<p>这能通过别的方式，实现登陆。</p>
+<p>这里就要提到联合查询时，当查询不存在的数据时，会虚拟这个数据出来。</p>
+<p>首先建立一个测试表</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517160250638.png" alt="image-20210517160250638" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517160250638.png" class="lozad post-image"></p>
+<p>执行联合查询语句</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517160559494.png" alt="image-20210517160559494" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517160559494.png" class="lozad post-image"></p>
+<p>我们发现联合查询的语句被成功虚拟了出来</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517161622441.png" alt="image-20210517161622441" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210517161622441.png" class="lozad post-image"></p>
+<p>只又在查询的同时才会虚拟出来，这个虚拟是暂时的。</p>
+<p>因此我们可以同样来虚拟一个新的用户，进行登录,这里要结合我们sqlmap跑出来的信息，对应好字段。</p>
+<p>构造我们的payload</p>
+<pre class="highlight"><code class="hljs sql">用户处：1&#x27; union <span class="hljs-keyword">select</span> <span class="hljs-number">1</span>,<span class="hljs-string">&#x27;admin&#x27;</span>,<span class="hljs-string">&#x27;81dc9bdb52d04dc20036dbd8313ed055&#x27;</span> <span class="hljs-comment">#</span><br>密码处：<span class="hljs-number">1234</span>（<span class="hljs-number">81</span>dc9bdb52d04dc20036dbd8313ed055解密之后的值）<br></code></pre>
 
 
 
-<h2 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h2><p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjNiGj"><img src="https://s3.ax1x.com/2021/01/26/sjNiGj.png" alt="sjNiGj.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjNiGj.png" class="lozad post-image"></a></p>
-<p>打开题目 打开payflag的功能菜单，提示flag需要100000000 money</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjNEMq"><img src="https://s3.ax1x.com/2021/01/26/sjNEMq.png" alt="sjNEMq.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjNEMq.png" class="lozad post-image"></a></p>
-<p>结合上述提示可知 获得flag需要三个步骤</p>
-<p>1.a student from CUIT</p>
-<p>2.输入正确的密码</p>
-<p>3.输入正确的金额</p>
-<p>第一点是身份验证，可以看一下cookie</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjNGsx"><img src="https://s3.ax1x.com/2021/01/26/sjNGsx.png" alt="sjNGsx.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjNGsx.png" class="lozad post-image"></a>](<a target="_blank" rel="noopener" href="https://imgchr.com/i/sjNmZT">https://imgchr.com/i/sjNmZT</a>)</p>
-<p>可以发现cookie很简单 就是user=0 因此是不是可以推测 user=1就可以完成CUIT的身份确认</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjNuoF"><img src="https://s3.ax1x.com/2021/01/26/sjNuoF.png" alt="sjNuoF.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjNuoF.png" class="lozad post-image"></a></p>
-<p>查看源码发现这里有对密码的提示，</p>
-<p><img src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201105143510347.png" alt="image-20201105143510347" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="C:\Users\17791\AppData\Roaming\Typora\typora-user-images\image-20201105143510347.png" class="lozad post-image"></p>
-<p>根据审计可知 要绕过is_number函数 且 password值为404 所以 POST传参为：password=404%00</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjNcef"><img src="https://s3.ax1x.com/2021/01/26/sjNcef.png" alt="sjNcef.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjNcef.png" class="lozad post-image"></a></p>
-<p>依次修改cookie和POST传参，</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjN0Wd"><img src="https://s3.ax1x.com/2021/01/26/sjN0Wd.png" alt="sjN0Wd.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjN0Wd.png" class="lozad post-image"></a></p>
-<p>下一步就是要传入money的值</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjNXY4"><img src="https://s3.ax1x.com/2021/01/26/sjNXY4.png" alt="sjNXY4.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjNXY4.png" class="lozad post-image"></a></p>
-<p>这里提示数字太长了，因此我们可以推测可能是strcmp比较，</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjUtcn"><img src="https://s3.ax1x.com/2021/01/26/sjUtcn.png" alt="sjUtcn.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjUtcn.png" class="lozad post-image"></a></p>
-<p>抓个包 发现php版本为5.3.3 可以使用 数组绕过</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjUrh4"><img src="https://s3.ax1x.com/2021/01/26/sjUrh4.png" alt="sjUrh4.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjUrh4.png" class="lozad post-image"></a></p>
 
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/BUUCTF%E4%B9%8B-%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BuyFlag/">https://husins.cn/BUUCTF%E4%B9%8B-%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BuyFlag/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/GXYCTF2019-BabySQli/">https://husins.cn/GXYCTF2019-BabySQli/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -254,25 +264,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/UNCTF之easyunserialize/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">Prev</div>
-        
-        <div class="nav-title">UNCTF之easyunserialize </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/BUUCTF之-SUCTF-2019-CheckIn/" class="nav-link">
+    <a href="/python之PEP8编码规范/" class="nav-link">
       <div>
         <div class="nav-label">Next</div>
         
-        <div class="nav-title">BUUCTF之[SUCTF 2019]CheckIn </div>
+        <div class="nav-title">python之PEP8编码规范 </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -283,7 +281,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-text">解题</span></a></li></ol>
+
 </div></main>
           <aside class="left-column">
             
@@ -316,7 +314,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-text">解题</span></a></li></ol>
+
     </div>
   </article>
   
@@ -379,35 +377,35 @@
     
     <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
     
-    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
     
-    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
     
-    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
-    
-    <a href="\tags\python" title="python"><div class="tags-list-item">python</div></a>
-    
-    <a href="\tags\文件上传" title="文件上传"><div class="tags-list-item">文件上传</div></a>
-    
-    <a href="\tags\nmap" title="nmap"><div class="tags-list-item">nmap</div></a>
-    
-    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
-    
-    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
-    
-    <a href="\tags\JWT Pickle" title="JWT Pickle"><div class="tags-list-item">JWT Pickle</div></a>
-    
-    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
-    
-    <a href="\tags\ms17-010" title="ms17-010"><div class="tags-list-item">ms17-010</div></a>
-    
-    <a href="\tags\信息收集" title="信息收集"><div class="tags-list-item">信息收集</div></a>
-    
-    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
     
     <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
     
-    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
+    
+    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
+    
+    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
+    
+    <a href="\tags\信息收集" title="信息收集"><div class="tags-list-item">信息收集</div></a>
+    
+    <a href="\tags\ms17-010" title="ms17-010"><div class="tags-list-item">ms17-010</div></a>
+    
+    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
+    
+    <a href="\tags\JWT Pickle" title="JWT Pickle"><div class="tags-list-item">JWT Pickle</div></a>
+    
+    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
+    
+    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
+    
+    <a href="\tags\nmap" title="nmap"><div class="tags-list-item">nmap</div></a>
     
   </div>
 </div>
@@ -422,7 +420,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-text">解题</span></a></li></ol>
+
   </article>
   
   
