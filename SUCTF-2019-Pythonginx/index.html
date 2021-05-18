@@ -8,13 +8,13 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Husins">
   <link rel="icon" href="/img/dog.jpg">
-  <title>CISCN2019 华北赛区 Day2 Web1之Hack World</title>
+  <title>SUCTF 2019-Pythonginx</title>
   
   
-  <meta property="og:title" content="CISCN2019 华北赛区 Day2 Web1之Hack World">
+  <meta property="og:title" content="SUCTF 2019-Pythonginx">
   
   
-  <meta property="og:url" content="https://husins.cn/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1%E4%B9%8BHack-World/index.html">
+  <meta property="og:url" content="https://husins.cn/SUCTF-2019-Pythonginx/index.html">
   
   
   <meta property="og:img" content="/img/dog.png">
@@ -22,12 +22,12 @@
   
   
   <meta property="og:type" content="article">
-  <meta property="og:article:published_time" content="2021-01-28">
-  <meta property="og:article:modified_time" content="2021-03-19">
+  <meta property="og:article:published_time" content="2021-05-18">
+  <meta property="og:article:modified_time" content="2021-05-18">
   <meta property="og:article:author" content="Husins">
   
   
-  <meta property="og:article:tag" content="BUUCTF">
+  <meta property="og:article:tag" content="python">
   
   
   
@@ -179,13 +179,13 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      CISCN2019 华北赛区 Day2 Web1之Hack World
+      SUCTF 2019-Pythonginx
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2021-01-28T08:41:19.000Z">
+    <time datetime="2021-05-18T13:10:54.000Z">
       <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-      <span>2021-01-28</span>
+      <span>2021-05-18</span>
     </time>
     
     <span class="dot"></span>
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>172 words</span>
+    <span>583 words</span>
     
   </div>
   
@@ -204,33 +204,44 @@
       <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
       
       
-        <a href="/tags/BUUCTF/" class="post-meta-link">BUUCTF</a>
+        <a href="/tags/python/" class="post-meta-link">python</a>
       
     </div>
   </div>
   
   </header>
   <div id="section" class="post-content">
-    <p><strong>知识点</strong></p>
-<p><code>SQL异或运算:</code> <code>假^假 =真</code> ，<code>真^真=假</code>，<code>假^真=真</code>，<code>真^假=真</code>,当我们查询 <code>1^0</code>、<code>0^1</code>、和 <code>1</code> 的回显是一样的，而查询 <code>1^1</code> 或<code>0^0</code>却会有报错提示</p>
-<p><strong>解题</strong></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214023.png" alt="image-20210125133354894" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214023.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214024.png" alt="image-20210125133415945" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214024.png" class="lozad post-image"></p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214025.png" alt="image-20210125133522403" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214025.png" class="lozad post-image"></p>
-<p>经过测试,页面一共有三种回显,正常返回话,否则返回<code>bool(false)</code>,出现过滤字符,返回<code>SQL Injection Checked</code>.</p>
-<p>由此可知,应该是布尔盲注,</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214026.png" alt="image-20210125134535573" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210319214026.png" class="lozad post-image"></p>
-<p>确实是布尔盲注,但是select之类的全部被过滤了,这里 采用新学的异或来进行绕过.</p>
-<p>编写盲注脚本,这里我们发现表名和字段名都给你了,直接找flag就可以了.</p>
-<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/20210128164230.png" alt="image-20210125141710021" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/20210128164230.png" class="lozad post-image"></p>
-<p>使用二分法,得到flag</p>
+    <p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518144246733.png" alt="image-20210518144246733" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518144246733.png" class="lozad post-image"></p>
+<p>打开题目，给出一个输入框，和一部分python的源代码，没有其余可用信息，进行代码审计。</p>
+<pre class="highlight"><code class="hljs python"><span class="hljs-meta">@app.route(&#x27;/getUrl&#x27;, methods=[&#x27;GET&#x27;, &#x27;POST&#x27;])</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">getUrl</span>():</span><br>    url = request.args.get(<span class="hljs-string">&quot;url&quot;</span>)<br>    host = parse.urlparse(url).hostname<br>    <span class="hljs-keyword">if</span> host == <span class="hljs-string">&#x27;suctf.cc&#x27;</span>:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;我扌 your problem? 111&quot;</span><br><br><br>    parts = <span class="hljs-built_in">list</span>(urlsplit(url))<br>    host = parts[<span class="hljs-number">1</span>]<br>    <span class="hljs-keyword">if</span> host == <span class="hljs-string">&#x27;suctf.cc&#x27;</span>:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;我扌 your problem? 222 &quot;</span> + host<br><br><br>    newhost = []<br>    <span class="hljs-keyword">for</span> h <span class="hljs-keyword">in</span> host.split(<span class="hljs-string">&#x27;.&#x27;</span>):<br>        newhost.append(h.encode(<span class="hljs-string">&#x27;idna&#x27;</span>).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))<br>    parts[<span class="hljs-number">1</span>] = <span class="hljs-string">&#x27;.&#x27;</span>.join(newhost) <span class="hljs-comment">#去掉 url 中的空格</span><br>    finalUrl = urlunsplit(parts).split(<span class="hljs-string">&#x27; &#x27;</span>)[<span class="hljs-number">0</span>]<br>    host = parse.urlparse(finalUrl).hostname<br>    <span class="hljs-keyword">if</span> host == <span class="hljs-string">&#x27;suctf.cc&#x27;</span>:<br>        <span class="hljs-keyword">return</span> urllib.request.urlopen(finalUrl).read()<br><br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;我扌 your problem? 333&quot;</span><br></code></pre>
+
+<p>题目给了三个<code>if</code> 给出的判断条件 都是 一样的，但是三个<code>if</code>获取的host值的方法不同，而且前两个<code>if</code>没有什么用处，第三个if处存在读取函数。</p>
+<p>综合上述，我们可以得出：</p>
+<pre><code> 1. 我们要绕过前两个`if`进入第三个`if`
+ 2. 通过第三个`if`使用伪协议，对`flag`进行读取</code></pre>
+<p>通过观察源码，我们可以发现，前面两个<code>if</code>都是使用urlparse或者urlsplit直接获取host，而这里偏偏使用一种特殊编码加密在解密的方式。这就是明显多此一举的行为，怀疑问题就是出现在这里。</p>
+<p>直接复制这个加解密字符串百度，我们能发现：</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518204838250.png" alt="image-20210518204838250" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518204838250.png" class="lozad post-image"></p>
+<p>使用<code>idna</code>编码<code>℆</code>之后，在使用<code>utf-8</code>解码，我们就能获得c/u这个字符串，也就是说当我们传入</p>
+<p><code>suctf.c℆</code>经过编码在解码之后我们能得到<code>suctf.cc/u</code>,这样的话我们就能成功绕过前面两个<code>if</code>进入第三个里面</p>
+<p>尝试读取/etc/passwd验证思路正确性</p>
+<pre class="highlight"><code class="hljs awk">file:<span class="hljs-regexp">//</span>suctf.c℆<span class="hljs-regexp">/../</span>..<span class="hljs-regexp">/../</span>..<span class="hljs-regexp">/etc/</span>passwd<br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518205858579.png" alt="image-20210518205858579" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518205858579.png" class="lozad post-image"></p>
+<p>这里的题目名也是一个坑<code>pythonginx</code>应该是<code>python 和 nginx</code></p>
+<p>这样的话我们直接读取<code>nginx</code>的关键文件即可。</p>
+<pre class="highlight"><code class="hljs tex">配置文件存放目录：&#x2F;etc&#x2F;nginx<br>主配置文件：&#x2F;etc&#x2F;nginx&#x2F;conf&#x2F;nginx.conf<br>管理脚本：&#x2F;usr&#x2F;lib64&#x2F;systemd&#x2F;system&#x2F;nginx.service<br>模块：&#x2F;usr&#x2F;lisb64&#x2F;nginx&#x2F;modules<br>应用程序：&#x2F;usr&#x2F;sbin&#x2F;nginx<br>程序默认存放位置：&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html<br>日志默认存放位置：&#x2F;var&#x2F;log&#x2F;nginx<br></code></pre>
+
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518210930045.png" alt="image-20210518210930045" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518210930045.png" class="lozad post-image"></p>
+<p>读取这个文件即可</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518211014931.png" alt="image-20210518211014931" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210518211014931.png" class="lozad post-image"></p>
 
   </div>
   <div>
   
   <div class="post-note note-warning copyright" style="margin-top: 42px">
     <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
-    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1%E4%B9%8BHack-World/">https://husins.cn/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1%E4%B9%8BHack-World/</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/SUCTF-2019-Pythonginx/">https://husins.cn/SUCTF-2019-Pythonginx/</a></p>
     <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
   </div>
   
@@ -238,25 +249,13 @@
 </article>
 <div class="nav">
   
-  <div class="nav-item-prev">
-    <a href="/网鼎杯2018之Comment/" class="nav-link">
-      <i class="iconfont icon-left nav-prev-icon"></i>
-      <div>
-        <div class="nav-label">Prev</div>
-        
-        <div class="nav-title">网鼎杯2018之Comment </div>
-        
-      </div>
-    </a>
-  </div>
-  
   
   <div class="nav-item-next">
-    <a href="/FBCTF2019之RCEService/" class="nav-link">
+    <a href="/GYCTF2020-FlaskApp/" class="nav-link">
       <div>
         <div class="nav-label">Next</div>
         
-        <div class="nav-title">FBCTF2019之RCEService </div>
+        <div class="nav-title">GYCTF2020-FlaskApp </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
