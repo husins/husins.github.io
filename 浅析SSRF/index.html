@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>1.4k 字</span>
+    <span>1.4k words</span>
     
   </div>
   
@@ -322,7 +322,7 @@
     <a href="/浅析SSTI漏洞/" class="nav-link">
       <i class="iconfont icon-left nav-prev-icon"></i>
       <div>
-        <div class="nav-label">上一篇</div>
+        <div class="nav-label">Prev</div>
         
         <div class="nav-title">浅析SSTI漏洞 </div>
         
@@ -334,7 +334,7 @@
   <div class="nav-item-next">
     <a href="/浅析文件包含漏洞/" class="nav-link">
       <div>
-        <div class="nav-label">下一篇</div>
+        <div class="nav-label">Next</div>
         
         <div class="nav-title">浅析文件包含漏洞 </div>
         
@@ -346,7 +346,7 @@
 </div>
 
 <div class="card card-content toc-card" id="mobiletoc">
-  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
 <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF-Server-side-Request-Forge-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-text">SSRF(Server-side Request Forge, 服务端请求伪造)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SSRF"><span class="toc-text">什么是 SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF-%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">SSRF 形成的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">SSRF攻击流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E5%9C%B0%E6%96%B9-%E6%A0%B8%E5%BF%83%E5%B0%B1%E6%98%AF%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E8%B5%84%E6%BA%90%E7%9A%84%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%83%BD%E6%9C%89%E5%8F%AF%E8%83%BD"><span class="toc-text">SSRF可能出现的地方(核心就是调用外部资源的所有参数都有可能)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="toc-text">SSRF的危害</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">SSRF漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%88%A9%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">SSRF利用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%A6%82%E4%BD%95%E9%98%B2%E6%8A%A4"><span class="toc-text">SSRF如何防护</span></a></li></ol></li></ol>
 </div></main>
           <aside class="left-column">
@@ -359,16 +359,16 @@
 <p class="author-description">层楼终究误少年,自由早晚乱余生。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>64</span>
-    <span>文章</span>
+    <span>65</span>
+    <span>Posts</span>
   </a>
   <a class="author-categories-count" href="/categories">
     <span>6</span>
-    <span>分类</span>
+    <span>Categories</span>
   </a>
   <a class="author-tags-count" href="/tags">
-    <span>21</span>
-    <span>标签</span>
+    <span>22</span>
+    <span>Tags</span>
   </a>
 </div>
 
@@ -379,7 +379,7 @@
   
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
-      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
 <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF-Server-side-Request-Forge-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-text">SSRF(Server-side Request Forge, 服务端请求伪造)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SSRF"><span class="toc-text">什么是 SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF-%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">SSRF 形成的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">SSRF攻击流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E5%9C%B0%E6%96%B9-%E6%A0%B8%E5%BF%83%E5%B0%B1%E6%98%AF%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E8%B5%84%E6%BA%90%E7%9A%84%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%83%BD%E6%9C%89%E5%8F%AF%E8%83%BD"><span class="toc-text">SSRF可能出现的地方(核心就是调用外部资源的所有参数都有可能)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="toc-text">SSRF的危害</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">SSRF漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%88%A9%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">SSRF利用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%A6%82%E4%BD%95%E9%98%B2%E6%8A%A4"><span class="toc-text">SSRF如何防护</span></a></li></ol></li></ol>
     </div>
   </article>
@@ -387,7 +387,7 @@
   
   <article class="card card-content categories-widget">
     <div class="categories-card">
-  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
   <div class="categories-list">
     
       <a href="/categories/CTF题解">
@@ -400,7 +400,7 @@
       <a href="/categories/漏洞总结">
         <div class="categories-list-item">
           漏洞总结
-          <span class="categories-list-item-badge">11</span>
+          <span class="categories-list-item-badge">12</span>
         </div>
       </a>
     
@@ -438,7 +438,7 @@
   
   <article class="card card-content tags-widget">
     <div class="tags-card">
-  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
   <div class="tags-list">
     
     <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
@@ -454,6 +454,8 @@
     <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
     
     <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
+    
+    <a href="\tags\Redis" title="Redis"><div class="tags-list-item">Redis</div></a>
     
     <a href="\tags\goole hacker" title="goole hacker"><div class="tags-list-item">goole hacker</div></a>
     
@@ -471,8 +473,6 @@
     
     <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
     
-    <a href="\tags\ms17-010" title="ms17-010"><div class="tags-list-item">ms17-010</div></a>
-    
   </div>
 </div>
   </article>
@@ -485,15 +485,20 @@
   
   
   <article class="card card-content toc-card">
-    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
 <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF-Server-side-Request-Forge-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0"><span class="toc-text">SSRF(Server-side Request Forge, 服务端请求伪造)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SSRF"><span class="toc-text">什么是 SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF-%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">SSRF 形成的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-text">SSRF攻击流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E5%9C%B0%E6%96%B9-%E6%A0%B8%E5%BF%83%E5%B0%B1%E6%98%AF%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E8%B5%84%E6%BA%90%E7%9A%84%E6%89%80%E6%9C%89%E5%8F%82%E6%95%B0%E9%83%BD%E6%9C%89%E5%8F%AF%E8%83%BD"><span class="toc-text">SSRF可能出现的地方(核心就是调用外部资源的所有参数都有可能)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="toc-text">SSRF的危害</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">SSRF漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%88%A9%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">SSRF利用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF%E5%A6%82%E4%BD%95%E9%98%B2%E6%8A%A4"><span class="toc-text">SSRF如何防护</span></a></li></ol></li></ol>
   </article>
   
   
   <article class="card card-content">
     <div class="recent-posts-card">
-  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
   <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-07-07</div>
+        <a href="/浅析Redis未授权/"><div class="recent-posts-item-content">浅析Redis未授权</div></a>
+      </div>
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-07-04</div>
@@ -508,11 +513,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-05-19</div>
         <a href="/CISCN2019总决赛Day2-Web1Easyweb/"><div class="recent-posts-item-content">CISCN2019总决赛Day2-Web1Easyweb</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2021-05-18</div>
-        <a href="/SUCTF-2019-Pythonginx/"><div class="recent-posts-item-content">SUCTF 2019-Pythonginx</div></a>
       </div>
     
   </div>
